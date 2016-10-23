@@ -5,7 +5,6 @@ This README would normally document whatever steps are necessary to get your app
 ### What is this repository for? ###
 
 * Quick summary
-A Feed'er app
 * Version
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
