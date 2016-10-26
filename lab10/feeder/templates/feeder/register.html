@@ -1,12 +1,17 @@
+{% extends "feeder/base_site.html" %}
 {% load static %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'feeder/materialize.css' %}">
-
+{% block content %}
 <div class="container">
 	<h1> Register Page, Welcome </h1>
-	<form method="POST">
+	<form  method="POST">
 		{% csrf_token %}
+		
 		{{ form.as_p }}
+
 		<button class="btn" type="submit" value="Register">Register</button>
 	</form>
+	<h2> {{ key }} </h2>
 </div>
+
+{% endblock %}

@@ -13,9 +13,10 @@ class InstructorForm(forms.ModelForm):
 
 class IndexView(generic.DetailView):
 	model = Instructor
-	template_name = "feeder/login.html"
+	template_name = "feeder/index.html"
 
 class RegisterView(generic.FormView):
 	template_name = "feeder/register.html"
 	form_class = InstructorForm
-	success_url = '/'
+	# template_values['key'] =  "value" 
+	success_url = '/feeder/index'
