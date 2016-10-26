@@ -1,0 +1,12 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'feeder/materialize.css' %}">
+
+<div class="container">
+	<h1> Register Page, Welcome </h1>
+	<form method="POST">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<button class="btn" type="submit" value="Register">Register</button>
+	</form>
+</div>

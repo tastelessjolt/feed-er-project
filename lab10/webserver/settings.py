@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'feeder.apps.FeederConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
