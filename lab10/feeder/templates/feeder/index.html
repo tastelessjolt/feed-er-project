@@ -2,7 +2,10 @@
 {% load static %}
 
 {% block content %}
-
-
+<h1> Welcome to Feed'er Management Portal <h1>
+<form method="POST">
+	{% csrf_token %}
+	{{ form.as_p }}
+</form>
 
 {% endblock %}
