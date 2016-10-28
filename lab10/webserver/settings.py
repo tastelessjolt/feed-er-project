@@ -100,6 +100,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# AUTH_USER_MODEL = 'feeder.MyUser'
+# AUTH_PROFILE_MODULE = 'feeder.Instructor'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

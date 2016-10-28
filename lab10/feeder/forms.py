@@ -1,13 +1,14 @@
 from django import forms
 from .models import Instructor, Course, Student
+from django.contrib.auth.models import User
 
 
 class InstructorForm(forms.ModelForm):
 	class Meta:
 		model = Instructor
-		fields = ['first_name', 'second_name', 'email', 'course']
+		fields = ['user', 'course']
 
 class LoginForm(forms.ModelForm):
 	class Meta:
-		model = Instructor
-		fields = ['email']
+		model = User
+		fields = ['username']
