@@ -29,7 +29,6 @@ class Assignment(models.Model):
 	deadline = models.DateTimeField('deadline')
 	course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
-
 	def __str__(self):
 		return self.assignment_name
 

@@ -6,14 +6,9 @@ from .forms import InstructorForm, LoginForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+import urllib.request
+import json	
 # Create your views here.
-
-# class IndexView(generic.FormView):
-# 	template_name = "feeder/index.html"
-# 	form_class = LoginForm
-# 	success_url = '/feeder/index'
-# from django.contrib.auth import views
-
 
 def LoginView(request):
 	if request.method == "POST":
@@ -41,7 +36,7 @@ def LoginView(request):
 			return HttpResponseRedirect(reverse('feeder:index'))
 		else :
 			form = LoginForm()
-	return render(request, "feeder/login.html", {'form' : form } )
+	return render(request, "feeder/login.html", {'form' : form  } )
 
 @login_required
 def IndexView(request):
@@ -66,9 +61,10 @@ def RegisterView(request):
 				user.username=request.POST['email']
 				user.set_password(request.POST['password'])
 				user.save()
-				instructor.user_id = user.id;
+				instructor.user_id = user.id
 				instructor.save()
-				return HttpResponse("You have been successfully registered")
+				message = "Registration complete. You can now login"
+				return render(request,'feeder/success.html')
 			else :
 				error_message="This email has already been taken"
 	else :
@@ -78,3 +74,19 @@ def RegisterView(request):
 			'form' : form,
 			'error_message' : error_message,
 		})
+
+def TokenVerify(request):
+	CLIENT_ID = "410381470-aviccs0f691gm6eqin9k9opo3ko5sji6.apps.googleusercontent.com"
+	validation_url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token="
+	if request.method == 'POST':
+		token = request.POST['idtoken']
+		data = json.loads(urllib.request.urlopen(validation_url + token).read().decode('utf-8'))
+		# return HttpResponse(str(type(data)))
+		if data['aud'] == CLIENT_ID:
+			if data['iss'] in ['accounts.google.com', 'https://accounts.google.com']:
+				HttpResponse(data['exp'])
+
+		return HttpResponse(data['name'])
+
+	else:
+		return HttpResponse("403 Forbidden")

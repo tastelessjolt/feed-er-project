@@ -34,14 +34,18 @@ def LoginView(request):
 			form = LoginForm()
 	return render(request, "admins/login.html", {
 			'form' : form, 
-			'error_message' : error_message
+			'error_message' : error_message,
 		 } )
 
 @permission_required('is_superuser', raise_exception=True)
 def IndexView(request):
-	return render(request, "admins/index.html", {'user' : request.user })
+	return render(request, "admins/index.html", {
+		'user' : request.user, 
+		'instructors': Instructor.objects.all(), 
+		'courses' : Course.objects.all()
+	})
 
-@login_required
+@permission_required('is_superuser', raise_exception=True)
 def Logout(request):
 	logout(request)
 	return HttpResponseRedirect(reverse('admins:login'))
