@@ -10,4 +10,5 @@ urlpatterns = [
 	url(r'^register/$', views.RegisterView, name='register'),
 	url(r'^index/$', views.IndexView, name='index'),
 	url(r'^logout/$', views.Logout, name='logout'),
+	url(r'^tokensignin/$', views.TokenVerify, name='gtoken')
 ]

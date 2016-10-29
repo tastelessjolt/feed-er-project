@@ -1,7 +1,11 @@
 {% extends "feeder/base_site.html" %}
 {% load static %}
 
+
 {% block content %}
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<meta name="google-signin-client_id" content="410381470-aviccs0f691gm6eqin9k9opo3ko5sji6.apps.googleusercontent.com">
+
 <h2 style="text-align:center" > Feed'er Management Portal </h1>
 
 
@@ -9,6 +13,7 @@
 <div class="card-content ">
 <form method="POST">
 	{% csrf_token %}
+    <p class="green-text"> {{ message }} </p>
     <p class="red-text"> {{ error_message }} </p>
 	{% for field in form %}
     <div class="fieldWrapper">
@@ -19,10 +24,50 @@
         {% endif %}
     </div>
     {% endfor %}
-	<button class="btn" type="submit"><i class="material-icons right">send</i>Login</button>
+	<button class="btn" type="submit"><i class="material-icons right">send</i>Login</button><br> or <br>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
 </form>
 </div>
 </div>
+<script type="text/javascript">
+// using jQuery
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+  console.log('Name: ' + profile.getName());
+  console.log('Image URL: ' + profile.getImageUrl());
+  console.log('Email: ' + profile.getEmail());
+
+
+  var id_token = googleUser.getAuthResponse().id_token;
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'http://localhost:8000/feeder/tokensignin/');
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  var csrftoken = getCookie('csrftoken');
+  xhr.setRequestHeader('X-CSRFToken', csrftoken)
+  // xhr.setRequestHeader('Cookie', 'csrftoken={% csrf_token %}');
+  xhr.onload = function() {
+    console.log('Signed in as: ' + xhr.responseText);
+  };
+  xhr.send('idtoken=' + id_token);
+}
+</script>
 {% endblock %}
 
 {% block navbar %}
