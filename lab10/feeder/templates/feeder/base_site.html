@@ -27,17 +27,19 @@
 <nav class="grey darken-3">
   <div class="container">
     <div class="nav-wrapper">
-      <a href="#" class="brand-logo">Audacity</a>
+        <ul id="nav-mobile" class="left hide-on-med-and-down">
+          <li><a href="">
+          {% block name %}
+            
+          {% endblock %}
+          </a></li>
+        </ul>
+      <a href="{% url 'feeder:index' %}" class="brand-logo center">Audacity</a>
       <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
-          <li><a href="home.html">Home</a></li>
-          <li><a href="aboutme.html">About Me</a></li>
-          <li><a href="interests.html">Interests</a></li>
-          <li><a href="timetable.html">Timetable</a></li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="accordion.html">Pokemon</a></li>
-          <li><a href="form.html">Form</a></li>
-          <li><a href="floorplan.html">Floor Plan</a></li>
+          {% block navbar %}
+            <li><a href="courses">Courses</a></li>
+          {% endblock %}
         </ul>
     </div>
   </div>

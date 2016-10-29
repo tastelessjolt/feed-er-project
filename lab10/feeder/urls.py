@@ -1,11 +1,13 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
+from django.contrib.auth import views as auth_views
 
 from . import views
 
 app_name = 'feeder'
 urlpatterns = [
-	url(r'^$', views.IndexView.as_view(), name='index'),
-	url(r'^register/$', views.RegisterView.as_view(), name='register'),
-	url(r'^login/$', views.IndexView.as_view(), name='login'),
-	url(r'^AddSession/$', views.AddSession, name='session'),
+	url(r'^$', views.LoginView, name='login'),
+	url(r'^login/$', views.LoginView, name='log_in'),
+	url(r'^register/$', views.RegisterView, name='register'),
+	url(r'^index/$', views.IndexView, name='index'),
+	url(r'^logout/$', views.Logout, name='logout'),
 ]

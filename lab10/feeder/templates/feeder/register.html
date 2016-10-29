@@ -1,15 +1,26 @@
 {% extends "feeder/base_site.html" %}
 {% load static %}
-
 {% block content %}
 	<h1> Register Page, Welcome </h1>
-	<form  method="POST">
+	<form method="POST">
 		{% csrf_token %}
-		
-		{{ form.as_p }}
-
-		<button class="btn" type="submit" value="Register">Register</button>
+	    <p class="red-text"> {{ error_message }} </p>
+		{% for field in form %}
+	    <div class="fieldWrapper">
+	        <span class="red-text">{{ field.errors }}</span>
+	        {{ field.label_tag }} {{ field }}
+	        {% if field.help_text %}
+	        <p class="help green-text">{{ field.help_text|safe }}</p>
+	        {% endif %}
+	    </div>
+	    {% endfor %}
+		<button class="btn" type="submit" value="Register"><i class="material-icons right">send</i>Register</button>
 	</form>
-	<h2> {{ key }} </h2>
 
 {% endblock %}
+
+
+{% block navbar %}
+    <li><a href="{% url 'feeder:login' %}">Login</a></li>
+    <li><a href="{% url 'feeder:register' %}">Register</a></li>   
+{% endblock navbar %}

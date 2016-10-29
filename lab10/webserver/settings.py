@@ -100,6 +100,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_URL = '/feeder/'
 # AUTH_USER_MODEL = 'feeder.MyUser'
 # AUTH_PROFILE_MODULE = 'feeder.Instructor'
 
