@@ -75,6 +75,7 @@ def RegisterView(request):
 			'error_message' : error_message,
 		})
 
+
 def TokenVerify(request):
 	CLIENT_ID = "410381470-aviccs0f691gm6eqin9k9opo3ko5sji6.apps.googleusercontent.com"
 	validation_url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token="
@@ -84,7 +85,7 @@ def TokenVerify(request):
 		# return HttpResponse(str(type(data)))
 		if data['aud'] == CLIENT_ID:
 			if data['iss'] in ['accounts.google.com', 'https://accounts.google.com']:
-				HttpResponse(data['exp'])
+				return HttpResponse(data['exp'])
 
 		return HttpResponse(data['name'])
 

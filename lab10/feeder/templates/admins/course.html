@@ -1,0 +1,14 @@
+{% extends 'admins/base_site.html' %}
+
+{% block content %}
+<div style="width: 400px; margin: 0 auto;" class="card white">
+<div class="card-content ">
+<form method="POST">
+	{% csrf_token %}
+		{{ form }}
+
+</form>
+</div>
+</div>
+
+{% endblock %}

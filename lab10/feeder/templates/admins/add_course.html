@@ -1,0 +1,83 @@
+{% extends 'admins/base_site.html' %}
+{% load static %}
+
+{% block content %}
+<div style="width: 400px; margin: 0 auto;" class="card white">
+<div class="card-content z-depth-5">
+
+<form method="POST">
+	{% csrf_token %}
+	<span class="card-title">Add Course</span>
+	
+	{{ cform.as_p }}
+    <span class="card-title">Expected Semester Exams</span>
+    {% for form in asformset.forms %}
+    <div class="as">	
+    	{{ form.as_p }}
+    	{# <div class="fieldWrapper"> #}
+	        {# {{ form.assignment_name.errors }} #}
+	        {# <label for="{{ form.assignment_name.id_for_label }}">Feedback Name</label> #}
+	        {# {{ form.assignment_name }} #}
+	        {# {% if form.assignment_name.help_text %} #}
+	        {# <p class="help">{{ form.assignment_name.help_text|safe }}</p> #}
+	        {# {% endif %} #}
+	    {# </div> #}
+	    {# <div class="fieldWrapper"> #}
+	        {# {{ form.description.errors }} #}
+	        {# <label for="{{ form.description.id_for_label }}">description</label> #}
+	        {# {{ form.description }} #}
+	        {# {% if form.description.help_text %} #}
+	        {# <p class="help">{{ form.description.help_text|safe }}</p> #}
+	        {# {% endif %} #}
+	    {# </div> #}
+
+    </div>
+    {% endfor %}
+    {{ asformset.management_form }}
+
+	<span class="card-title">Feedback Forms</span>
+    {% for form in fbformset.forms %}
+    <div class="fb ">	
+    	<div class="fieldWrapper">
+	        {{ form.fb_name.errors }}
+	        <label for="{{ form.fb_name.id_for_label }}">Feedback Name</label>
+	        {{ form.fb_name }}
+	        {% if form.fb_name.help_text %}
+	        <p class="help">{{ form.fb_name.help_text|safe }}</p>
+	        {% endif %}
+	    </div>
+	    <div class="fieldWrapper">
+	        {{ form.deadline.errors }}
+	        <label for="{{ form.deadline.id_for_label }}">Deadline</label>
+	        {{ form.deadline }}
+	        {% if form.deadline.help_text %}
+	        <p class="help">{{ form.deadline.help_text|safe }}</p>
+	        {% endif %}
+	    </div>
+    </div>
+    {% endfor %}
+    {{ fbformset.management_form }}
+
+
+	<input class="btn purple darken-4" type="submit" name="Submit">
+</form>
+</div>
+</div>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script type="text/javascript" src="{% static 'admins/moment.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'admins/bootstrap-material-datetimepicker.js' %}"></script>
+<script type="text/javascript">
+	$('.date-format').bootstrapMaterialDatePicker({ format : 'YYYY-MM-DD HH:MM:SS', minDate : new Date() });
+	$(document).ready(function() {
+      	$('.fb').formset({ 
+      		addText : ' <br><p class="btn white-text green darken-4">Add Feedback Form </p> <br></br>',
+      		deleteText : '<p class="btn white-text red darken-4">Remove Form</p> <br></br> ',
+      	});
+      	$('.as').formset({ 
+      		addText : ' <br><p class="btn white-text green darken-4">Add Exam </p> <br></br>',
+      		deleteText : '<p class="btn white-text red darken-4">Remove Exam</p> <br></br> ',
+      	});
+  	});
+</script>
+{% endblock %}
