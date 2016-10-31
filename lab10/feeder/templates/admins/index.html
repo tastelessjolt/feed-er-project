@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<h2 style="text-align:center" > Feed'er Admin Portal </h1>
+<h2 style="text-align:center" > Feed'er Admin Portal </h1> <a href="{% url 'admins:addstudents' %}" class="btn right">Add Students from CSV</a>
 <h5> Welcome back, {{ user.get_full_name }} </h5>
 <h6 class="green-text">{{ message }}</h6>
 	    <div class="row">
@@ -33,7 +33,5 @@
 {% endblock %}
 
 {% block name %}
-	<li><a href=""> {{ user.get_full_name }} </a> </li>
-	<li><a href="">Add Students</a> </li>
-	<li><a href="">Assign Courses</a> </li>
+	
 {% endblock %}

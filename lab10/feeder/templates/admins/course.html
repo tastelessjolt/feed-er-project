@@ -1,16 +1,70 @@
 {% extends 'admins/base_site.html' %}
 
 {% block content %}
-<div style="width: 400px; margin: 0 auto;" class="card white">
-<div class="card-content ">
 <form method="POST">
 	{% csrf_token %}
+<div class="row">
+<div class="col s10 offset-s1">
+<div style="margin: 0 auto;" class="card">
+	<div class="card-content">
+	<div class="row">
+	<div class="col s6">
 		{{ cform }}
-		{{ formset }}
+	</div>
+	<div class="col s6">
+		{{ iformset.as_p }}
+		{{ iformset.management_form }}
+	</div>
+	</div>
+	</div>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="card col s6">
+	<div class="card-content">
+		{% if studentlist %}
+			<table>
+		        <thead>
+		          <tr>
+		              <th data-field="name">Name</th>
+		              <th data-field="username">Username</th>
+		          </tr>
+		        </thead>
 
-
+		        <tbody>
+			{% for student in studentlist %}
+		          <tr>
+		            <td>{{ student.user.get_fullname }}</td>
+		            <td>{{ student.user.username }}</td>
+		          </tr>
+			{% endfor %}
+		        </tbody>
+		      </table>
+		{% else %}
+			<h3 class="center">No students registered</h3>
+		{% endif %}		
+	</div>
+</div>
+<div class="card col s6">
+	<div class="card-content">
+		{% if allstudents %}
+			<select multiple="multiple" class="allstudents" name="All Students" title="All Students">
+				{% for student in allstudents %}
+					<option value="{{ student.user.username }}">{{ student.user.username }}</option>
+				{% endfor %}
+			</select>
+		{% else %}
+			<h3 class="center">No students registered</h3>
+		{% endif %}		
+	</div>
+</div>
 </form>
-</div>
-</div>
+{% endblock %}
 
+{% block navbar %}
+    <li><a href="{% url 'admins:addcourse' %}">Add Course</a></li>
+    <li><a href="{% url 'admins:courses' %}">Courses</a></li>
+    <li><a href="{% url 'admins:instructors' %}">Instructor</a></li>
+    <li><a href="{% url 'admins:logout' %}">Sign out</a></li>
 {% endblock %}

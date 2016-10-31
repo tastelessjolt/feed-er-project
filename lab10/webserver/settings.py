@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -101,6 +102,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOGIN_URL = '/feeder/'
+
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 'feeder.backend.GSigninBackend']
 # AUTH_USER_MODEL = 'feeder.MyUser'
 # AUTH_PROFILE_MODULE = 'feeder.Instructor'
 
@@ -122,3 +125,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}

@@ -13,4 +13,6 @@ urlpatterns = [
 	url(r'^courses/(?P<pk>[0-9]+)/$', views.GetCourse, name='course'),
 	url(r'^instructors/$', views.AllInstructors, name='instructors'),
 	url(r'^instructors/(?P<pk>[0-9]+)/$', views.GetInstructor, name='instructor'),
+	url(r'^addstudent/$', views.AddStudent, name='addstudent'),
+	url(r'^addstudents/$', views.AddStudents, name='addstudents'),
 ]

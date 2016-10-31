@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from feeder.models import Course, Instructor, Feedback, Question, Answer, Assignment
+from feeder.models import Course, Student, Instructor, Feedback, Question, Answer, Assignment
 from django.core import validators
 
 class LoginForm(forms.ModelForm):
@@ -16,15 +16,23 @@ class CourseForm(forms.ModelForm):
         model = Course
         fields = '__all__'
 
-class InstructorForm(forms.ModelForm):
-	class Meta:
-		model = Instructor
-		fields = '__all__'
+class InstructorForm(forms.Form):
+	username = forms.EmailField()		
 
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('email',)
+
+class StudentForm(forms.ModelForm):
+	class Meta:
+		model = User
+		fields = ['first_name', 'last_name' , 'username', 'password']
+		widgets = {
+			'password' : forms.PasswordInput()
+		}
+class AddStudentsForm(forms.Form):
+	csv_file = forms.FileField(required=True)
     
 class GetInstructorForm(forms.Form):
 	first_name = User._meta.get_field('first_name').formfield()

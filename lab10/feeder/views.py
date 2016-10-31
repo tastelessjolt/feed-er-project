@@ -10,11 +10,20 @@ import urllib.request
 import json	
 # Create your views here.
 
+def StudentLogin(request):
+	if request.method == "GET":
+		return HttpResponse("Yoo. You GET me. :P")
+	else :
+		return HttpResponse(request.POST)
+
 def LoginView(request):
 	if request.method == "POST":
 		form = LoginForm(request.POST)
 		# if form.is_valid():
-		user = authenticate(username=request.POST['email'], password=request.POST['password'])
+		if request.POST.get('token'):
+			user = authenticate(token = request.POST['token'])
+		else :
+			user = authenticate(username=request.POST['email'], password=request.POST['password'])
 		if user is not None:
 			if hasattr(user, 'instructor'):
 				login(request, user)
@@ -87,7 +96,7 @@ def TokenVerify(request):
 			if data['iss'] in ['accounts.google.com', 'https://accounts.google.com']:
 				return HttpResponse(data['exp'])
 
-		return HttpResponse(data['name'])
+		return data
 
 	else:
-		return HttpResponse("403 Forbidden")
+		return 

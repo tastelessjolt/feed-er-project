@@ -3,8 +3,7 @@
 
 
 {% block content %}
-<script src="https://apis.google.com/js/platform.js" async defer></script>
-<meta name="google-signin-client_id" content="410381470-aviccs0f691gm6eqin9k9opo3ko5sji6.apps.googleusercontent.com">
+
 
 <h2 style="text-align:center" > Feed'er Management Portal </h1>
 
@@ -24,8 +23,13 @@
         {% endif %}
     </div>
     {% endfor %}
-	<button class="btn" type="submit"><i class="material-icons right">send</i>Login</button><br> or <br>
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <div class="row">
+    <button class="btn col s4 offset-s1" type="submit"><i class="material-icons right">send</i>Login</button>
+    {# </div> #}
+     {# <p class="center col s1">or</p>{# </br> #} 
+    {# <div class="row"> #}
+    <div class="g-signin2 col s5 offset-s1" data-onsuccess="onSignIn"></div>
+    </div>
 </form>
 </div>
 </div>
@@ -47,25 +51,48 @@ function getCookie(name) {
     return cookieValue;
 }
 
+
+function post(path, params, method) {
+    method = method || "post"; // Set method to post by default if not specified.
+
+    // The rest of this code assumes you are not using a library.
+    // It can be made less wordy if you use one.
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", path);
+    
+    for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", key);
+            hiddenField.setAttribute("value", params[key]);
+
+            form.appendChild(hiddenField);
+         }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
 function onSignIn(googleUser) {
   var profile = googleUser.getBasicProfile();
-  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-  console.log('Name: ' + profile.getName());
-  console.log('Image URL: ' + profile.getImageUrl());
   console.log('Email: ' + profile.getEmail());
 
 
   var id_token = googleUser.getAuthResponse().id_token;
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'http://localhost:8000/feeder/tokensignin/');
-  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  // var xhr = new XMLHttpRequest();
+  // xhr.open('POST', 'http://localhost:8000/feeder/login/');
+  // xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   var csrftoken = getCookie('csrftoken');
-  xhr.setRequestHeader('X-CSRFToken', csrftoken)
-  // xhr.setRequestHeader('Cookie', 'csrftoken={% csrf_token %}');
-  xhr.onload = function() {
-    console.log('Signed in as: ' + xhr.responseText);
-  };
-  xhr.send('idtoken=' + id_token);
+  // xhr.setRequestHeader('X-CSRFToken', csrftoken );
+  // // xhr.setRequestHeader('Cookie', 'csrftoken={% csrf_token %}');
+  // xhr.onload = function() {
+  //   console.log('Signed in as: ' + xhr.responseText);
+  // };
+  // xhr.send('token=' + id_token);
+  post('', { csrfmiddlewaretoken : csrftoken, token : id_token })
 }
 </script>
 {% endblock %}

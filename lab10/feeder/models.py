@@ -50,18 +50,18 @@ class Answer(models.Model):
 	answer = models.CharField(max_length=500)
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
 	def __str__(self):
-		return self.answer
+		return self.Answer
 
 class Instructor(models.Model):
 	course = models.ManyToManyField(Course, blank = True, default=1)
-	user = models.OneToOneField(User)
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	# __str__ for printing
 	def __str__(self):
 		return self.user.get_full_name()
 
 class Student(models.Model):
 	course = models.ManyToManyField(Course, blank = True, default=1)
-	user = models.OneToOneField(User)
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	# __str__ for printing
 	def __str__(self):
 		return self.user.get_full_name()

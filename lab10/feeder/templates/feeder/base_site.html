@@ -6,6 +6,7 @@
   {# <link rel="stylesheet" type="text/css" href="styles/nav-bar.css"> #}
   {# <link rel="stylesheet" type="text/css" href="styles/home.css"> #}
   {# <link rel="stylesheet" type="text/css" href="materialize/css/materialize.css"> #}
+
   <link rel="stylesheet" type="text/css" href="{% static 'feeder/materialize.css' %}">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style type="text/css">
@@ -22,6 +23,7 @@
   
 </head>
 <body>
+<meta name="google-signin-client_id" content="410381470-aviccs0f691gm6eqin9k9opo3ko5sji6.apps.googleusercontent.com">
 <header>
 <div class="navbar-fixed">
 <nav class="grey darken-3">
@@ -59,4 +61,22 @@
     $('select').material_select();
 });
 </script>
+<script>
+    function onLoad() {
+      gapi.load('auth2', function() {
+        gapi.auth2.init();
+      });
+    }
+  function signOut() {
+    gapi.load('auth2', function() {
+      gapi.auth2.init();
+    });
+
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log('User signed out.');
+    });
+  }
+</script>
+<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
 </body>

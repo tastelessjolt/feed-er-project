@@ -25,6 +25,9 @@
   <div class="container">
     <div class="nav-wrapper">
         <ul id="nav-mobile" class="left hide-on-med-and-down">
+          <li><a href="{% url 'admins:index' %}"> {{ user.get_full_name }} </a> </li>
+          <li><a href="{% url 'admins:addstudent' %}">Add Student</a> </li>
+          <li><a href="">Assign Courses</a> </li>
           {% block name %}
             
           {% endblock %}

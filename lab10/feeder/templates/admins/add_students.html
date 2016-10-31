@@ -1,0 +1,31 @@
+{% extends 'admins/base_site.html' %}
+{% load static %}
+
+{% block content %}
+	<form method="POST" enctype="multipart/form-data">
+		{% csrf_token %}
+		<div class="file-field input-field">
+			<div class="btn">
+			<span>CSV File</span>
+		 		{{ form.csv_file }}
+		 	</div>
+		 	<div class="file-path-wrapper">
+	 	        <input class="file-path validate" type="text">
+	 	      </div>
+		</div>
+		<input type="submit" name="Upload" class="btn">
+	</form>
+{% endblock %}
+
+{% block navbar %}
+    <li><a href="{% url 'admins:addcourse' %}">Add Course</a></li>
+    <li><a href="{% url 'admins:courses' %}">Courses</a></li>
+    <li><a href="{% url 'admins:instructors' %}">Instructor</a></li>
+    <li><a href="{% url 'admins:logout' %}">Sign out</a></li>
+{% endblock %}
+	
+
+
+
+	
+
