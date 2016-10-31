@@ -1,0 +1,17 @@
+{% extends 'admins/base_site.html' %}
+
+{% block content %}
+ <h3 class="green-text"> {{ message }} </h3>
+{% endblock %}
+
+{% block navbar %}
+    <li><a href="{% url 'admins:addcourse' %}">Add Course</a></li>
+    <li><a href="{% url 'admins:courses' %}">Courses</a></li>
+    <li><a href="{% url 'admins:instructors' %}">Instructor</a></li>
+    <li><a href="{% url 'admins:logout' %}">Sign out</a></li>
+{% endblock %}
+{% block name %}
+	<li><a href=""> {{ user.get_full_name }} </a> </li>
+	<li><a href="">Add Students</a> </li>
+	<li><a href="">Assign Courses</a> </li>
+{% endblock %}

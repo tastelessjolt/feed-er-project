@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from feeder.models import Course, Instructor, Feedback, Question, Answer, Assignment
+from django.core import validators
 
 class LoginForm(forms.ModelForm):
 	class Meta:
@@ -16,9 +17,6 @@ class CourseForm(forms.ModelForm):
         fields = '__all__'
 
 class InstructorForm(forms.ModelForm):
-	first_name = forms.CharField(max_length=50)
-	last_name = forms.CharField(max_length=50)
-	username = forms.EmailField()
 	class Meta:
 		model = Instructor
 		fields = '__all__'
@@ -39,15 +37,22 @@ class FeedbackForm(forms.ModelForm):
 		model = Feedback
 		exclude = ['course','pub_date']
 		widgets = {
-			'deadline' : forms.DateInput(attrs={'class':'date-format'}),
+			'deadline' : forms.DateTimeInput(attrs={'class':'date-format'}),
 		}
 
 class QuestionForm(forms.ModelForm):
+	def clean(self):
+		if self.cleaned_data['question_text'] == "":
+			raise ValidationError(_('Invalid value'), code='invalid')
+		return self.cleaned_data
 	class Meta:
 		model = Question
-		exclude = ['feedback']  
+		exclude = ['feedback']
 
 class AssignmentForm(forms.ModelForm):
 	class Meta:
 		model = Assignment
 		exclude = ['pub_date', 'course']
+		widgets = {
+			'deadline' : forms.DateTimeInput(attrs={'class':'date-format'}),
+		}

@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect, get_object_or_404,get_list_or_404
-from feeder.models import Instructor, Course, Student
+from feeder.models import Instructor, Course, Student, Feedback, Question
 from django.urls import reverse
 from .forms import *
 from django.contrib.auth.models import User
@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import permission_required
 from django.forms.models import model_to_dict
 from django.forms import inlineformset_factory
 from django.forms import formset_factory
+from django.utils import timezone
 # Create your views here.
 
 def LoginView(request):
@@ -58,29 +59,96 @@ def AllCourses(request):
 @permission_required('is_superuser', raise_exception=True)
 def GetCourse(request, pk):
 	course = get_object_or_404(Course, pk=pk)
-	UserFormSet = formset_factory(UserForm, extra=4)
-	formset = UserFormSet()
-	return render(request,'admins/course.html',{'formset' : formset})
+	courseform =  CourseForm(instance=course)
+	iform = InstructorForm(instance=course.instructor)
+	return render(request,'admins/course.html',{
+		'cform' : courseform,
+		'iforms' : iform,
+		})
 
 @permission_required('is_superuser', raise_exception=True)
 def AddCourse(request):
 	if request.method == "POST":
-		return HttpResponse("Nothing")
+		AssignmentFormSet = formset_factory(AssignmentForm)
+		FeedbackFormSet = formset_factory(FeedbackForm)
+		QuestionFormSet = formset_factory(QuestionForm)
+		
+		courseform = CourseForm(request.POST)
+		asformset = AssignmentFormSet(request.POST,prefix='as')
+		fbform1 = FeedbackForm(request.POST, prefix='fb1')
+		fbform2 = FeedbackForm(request.POST, prefix='fb2')
+		qsformset1 = QuestionFormSet(request.POST, prefix='qs1')
+		qsformset2 = QuestionFormSet(request.POST, prefix='qs2')
+		
+		if courseform.is_valid() and fbform1.is_valid() and fbform2.is_valid() and asformset.is_valid() and qsformset1.is_valid() and qsformset2.is_valid() :
+			qsformset1.is_valid()	
+			qsformset2.is_valid()
+			course = courseform.save()
+			for asform in asformset :
+				assign = asform.save(commit=False)
+				assign.course_id = course.id
+				assign.pub_date = timezone.now()
+				assign.save()
+			fb1 = fbform1.save(commit=False)
+			fb2 = fbform2.save(commit=False)
+			fb1.course_id = course.id
+			fb1.pub_date = timezone.now()
+			fb1.save()
+			for qsform in qsformset1 :
+				qs = qsform.save(commit=False)
+				qs.feedback_id = fb1.id
+				qs.save()
+			fb2.course_id = course.id
+			fb2.pub_date = timezone.now()
+			fb2.save()
+			for qsform in qsformset2 :
+				qs = qsform.save(commit=False)
+				qs.feedback_id = fb2.id
+				qs.save()
+			return render(request,'admins/success.html', {'message' : "Course has been registered"})
+
+		return render(request,'admins/add_course.html',{
+				'cform' : courseform,
+				'fbform1' : fbform1,
+				'fbform2' : fbform2,
+				'asformset' : asformset,
+				'qsformset1' : qsformset1,
+				'qsformset2' : qsformset2,
+			})
 	else:
-		courseform = CourseForm()
+		courseform = CourseForm(initial={
+			'course_code' : 'CS 251',
+			'course_name' : 'Software Systems Lab',
+			})
 		fb = FeedbackForm
-		AssignmentFormSet = formset_factory(AssignmentForm, extra=2)
-		FeedbackFormSet = formset_factory(FeedbackForm, extra=2)
-		asformset = AssignmentFormSet(initial=[{
+		AssignmentFormSet = formset_factory(AssignmentForm, extra=0)
+		FeedbackFormSet = formset_factory(FeedbackForm, extra=0)
+		QuestionFormSet = formset_factory(QuestionForm)
+
+
+		asformset = AssignmentFormSet(prefix = 'as',initial=[{
 			'assignment_name': 'Midsem Examination',
 		}, {
 			'assignment_name': 'Endsem Examination',
 		}])
-		fbformset  FeedbackFormSet()
+
+		fbform1 = FeedbackForm(prefix = 'fb1', initial={
+			'fb_name': 'Midsem Examination',
+		})
+		fbform2 = FeedbackForm(prefix = 'fb2', initial={
+			'fb_name': 'Endsem Examination',
+		})
+
+		qsformset1 = QuestionFormSet(prefix = 'qs1')
+		qsformset2 = QuestionFormSet(prefix = 'qs2')
+
 		return render(request, "admins/add_course.html", {
 				'cform' : courseform,
-				'fbformset' : fbformset,
+				'fbform1' : fbform1,
+				'fbform2' : fbform2,
 				'asformset' : asformset,
+				'qsformset1' : qsformset1,
+				'qsformset2' : qsformset2,
 			})
 
 @permission_required('is_superuser', raise_exception=True)

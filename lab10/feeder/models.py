@@ -17,24 +17,27 @@ class Assignment(models.Model):
 	assignment_name = models.CharField(max_length=50, verbose_name = "Exam/Assignment")
 	description = models.CharField(max_length=300, blank = True)
 	pub_date = models.DateTimeField('date published')
-	deadline = models.DateTimeField('deadline')
+	deadline = models.DateTimeField('deadline',null=False)
 	course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
 	def __str__(self):
 		return self.assignment_name
 
 class Feedback(models.Model):
-	fb_name = models.CharField(max_length=100)
+	fb_name = models.CharField(max_length=100, verbose_name='Feedback Name')
 	pub_date = models.DateTimeField('date published')
-	deadline = models.DateTimeField('deadline')
+	deadline = models.DateTimeField('deadline',null=False)
 	course = models.ForeignKey(Course, on_delete=models.CASCADE)
 	class Meta:
 		verbose_name = "Feedback"
 		verbose_name_plural = "Feedbacks"
 
+	def __str__(self):
+		return self.fb_name
+
 
 class Question(models.Model):
-	question_text = models.CharField(max_length=300)
+	question_text = models.CharField(max_length=300, null=False)
 	feedback = models.ForeignKey(Feedback, on_delete=models.CASCADE)
 	class Meta:
 		verbose_name = "Question"
@@ -46,6 +49,8 @@ class Question(models.Model):
 class Answer(models.Model):
 	answer = models.CharField(max_length=500)
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
+	def __str__(self):
+		return self.answer
 
 class Instructor(models.Model):
 	course = models.ManyToManyField(Course, blank = True, default=1)
