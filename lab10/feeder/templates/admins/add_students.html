@@ -5,7 +5,7 @@
 	<form method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
 		<div class="file-field input-field">
-			<div class="btn">
+			<div class="btn orange waves-effect waves-dark">
 			<span>CSV File</span>
 		 		{{ form.csv_file }}
 		 	</div>
@@ -13,14 +13,12 @@
 	 	        <input class="file-path validate" type="text">
 	 	      </div>
 		</div>
-		<input type="submit" name="Upload" class="btn">
+		<input type="submit" name="Upload" class="btn orange waves-effect waves-dark">
 	</form>
 {% endblock %}
 
 {% block navbar %}
     <li><a href="{% url 'admins:addcourse' %}">Add Course</a></li>
-    <li><a href="{% url 'admins:courses' %}">Courses</a></li>
-    <li><a href="{% url 'admins:instructors' %}">Instructor</a></li>
     <li><a href="{% url 'admins:logout' %}">Sign out</a></li>
 {% endblock %}
 	

@@ -39,7 +39,7 @@ def LoginView(request):
 					'error_message' : welcome,
 				})
 			else :
-				return HttpResponseRedirect(reverse('feeder:login',{'error_message' : "Students cannot login here"}))
+				return HttpResponseRedirect(reverse('feeder:login'))
 		else :
 			form = LoginForm(request.POST)
 			return render(request, "feeder/login.html", {
@@ -54,11 +54,11 @@ def LoginView(request):
 			form = LoginForm()
 	return render(request, "feeder/login.html", {'form' : form  } )
 
-@login_required
+@login_required(login_url='/feeder/login/')
 def IndexView(request):
 	return render(request, "feeder/index.html", {'user' : request.user })
 
-@login_required
+@login_required(login_url='/feeder/login/')
 def Logout(request):
 	logout(request)
 	return HttpResponseRedirect(reverse('feeder:login'))

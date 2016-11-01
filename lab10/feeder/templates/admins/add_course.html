@@ -46,7 +46,7 @@
     </div>
 
 
-	<input class="btn purple darken-4" type="submit" name="Submit">
+	<input class="btn orange waves-effect waves-light purple darken-4" type="submit" name="Submit">
 </form>
 </div>
 </div>
@@ -58,14 +58,14 @@
 	$('.date-format').bootstrapMaterialDatePicker({ format : 'MM/DD/YYYY HH:MM', minDate : new Date() });
 	$(document).ready(function() {
       	$('.qs1').formset({ 
-      		addText : ' <br><p class="btn white-text green darken-4">Add Question </p> <br></br>',
-      		deleteText : '<p class="btn white-text red darken-4">Remove Question</p> <br></br> ',
+      		addText : ' <br><p class="btn white-text green ">Add Question </p> <br></br>',
+      		deleteText : '<p class="btn white-text red ">Remove Question</p> <br></br> ',
       		prefix: '{{ qsformset1.prefix }}',
 			formCssClass: 'dynamic-formset1'
       	});
       	$('.qs2').formset({ 
-      		addText : ' <br><p class="btn white-text green darken-4">Add Question </p> <br></br>',
-      		deleteText : '<p class="btn white-text red darken-4">Remove Question</p> <br></br> ',
+      		addText : ' <br><p class="btn white-text green ">Add Question </p> <br></br>',
+      		deleteText : '<p class="btn white-text red ">Remove Question</p> <br></br> ',
       		prefix: '{{ qsformset2.prefix }}',
 			formCssClass: 'dynamic-formset2'
       	});
@@ -75,8 +75,6 @@
 
 {% block navbar %}
     <li><a href="{% url 'admins:addcourse' %}">Add Course</a></li>
-    <li><a href="{% url 'admins:courses' %}">Courses</a></li>
-    <li><a href="{% url 'admins:instructors' %}">Instructor</a></li>
     <li><a href="{% url 'admins:logout' %}">Sign out</a></li>
 {% endblock %}
 {% block name %}

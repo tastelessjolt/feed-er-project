@@ -18,7 +18,7 @@
 	        {% endif %}
 	    </div>
 	    {% endfor %}
-		<button class="btn" type="submit" value="Register"><i class="material-icons right">send</i>Register</button>
+		<button class="btn orange waves-effect waves-light" type="submit" value="Register"><i class="material-icons right">send</i>Register</button>
 	</form>
 	</div>
 	</div>
@@ -27,8 +27,6 @@
 
 {% block navbar %}
     <li><a href="{% url 'admins:addcourse' %}">Add Course</a></li>
-    <li><a href="{% url 'admins:courses' %}">Courses</a></li>
-    <li><a href="{% url 'admins:instructors' %}">Instructor</a></li>
     <li><a href="{% url 'admins:logout' %}">Sign out</a></li>
 {% endblock %}
 	

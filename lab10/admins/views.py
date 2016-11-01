@@ -43,7 +43,7 @@ def LoginView(request):
 			'error_message' : error_message,
 		 } )
 
-@permission_required('is_superuser', raise_exception=True)
+@permission_required('is_superuser', login_url='/admins/login/')
 def IndexView(request):
 	return render(request, "admins/index.html", {
 		'user' : request.user, 
@@ -51,37 +51,60 @@ def IndexView(request):
 		'courses' : Course.objects.all()
 	})
 
-@permission_required('is_superuser', raise_exception=True)
+@permission_required('is_superuser', login_url='/admins/login/')
 def Logout(request):
 	logout(request)
 	return HttpResponseRedirect(reverse('admins:login'))
 
-@permission_required('is_superuser', raise_exception=True)
+@permission_required('is_superuser', login_url='/admins/login/')
 def AllCourses(request):
 	return HttpResponse("Courses page")
 
-@permission_required('is_superuser', raise_exception=True)
+@permission_required('is_superuser', login_url='/admins/login/')
 def GetCourse(request, pk):
 	course = get_object_or_404(Course, pk=pk)
 	courseform =  CourseForm(instance=course)
-	insform = [dict((x,)) for x in list(zip(['username' for i in range(len(course.instructor_set.all()))], map(lambda ins : ins.user.username , course.instructor_set.all())))]
-	InstructorFormSet = formset_factory(InstructorForm,extra=1) 
 	studentlist = course.student_set.all()
+	instructorlist = course.instructor_set.all()
 	allstudents = Student.objects.all()
-	iformset = InstructorFormSet(initial=insform)
+	allinstructors = Instructor.objects.all()
 	if request.method == "POST":
-		return HttpResponse(str(json.load(request.POST)))	
+		st = ""
+		for stud in studentlist :
+			course.student_set.remove(stud)
+		for inst in instructorlist :
+			course.instructor_set.remove(inst)
+		for value in request.POST:
+			if value.startswith('student'):
+				if request.POST[value] == 'on':
+					value = value[7:]
+					stud = get_object_or_404(Student, id=int(value))	
+					stud.course.add(course)
+				else :
+					value = value[7:]
+					stud = get_object_or_404(Student, id=int(value))	
+					stud.course.remove(course)
+			elif value.startswith('instructor'):
+				if request.POST[value] == 'on':
+					value = value[10:]
+					inst = get_object_or_404(Instructor, id=int(value))	
+					inst.course.add(course)
+				else :
+					value = value[10:]
+					inst = get_object_or_404(Instructor, id=int(value))	
+					inst.course.remove(course)
+		return HttpResponseRedirect(reverse('admins:course', args={course.id, }))
 	else :
-		logger.info(iformset)
 		return render(request,'admins/course.html',{
 			'cform' : courseform,
-			'iformset' : iformset,
 			'studentlist' : studentlist,
+			'instructorlist' : instructorlist,
 			'allstudents' : allstudents,
+			'allinstructors' : allinstructors,
 			'course' : course,
 		})
 
-@permission_required('is_superuser', raise_exception=True)
+@permission_required('is_superuser', login_url='/admins/login/')
 def AddCourse(request):
 	if request.method == "POST":
 		AssignmentFormSet = formset_factory(AssignmentForm)
@@ -166,17 +189,17 @@ def AddCourse(request):
 				'qsformset2' : qsformset2,
 			})
 
-@permission_required('is_superuser', raise_exception=True)
+@permission_required('is_superuser', login_url='/admins/login/')
 def AllInstructors(request):
 	return HttpResponse()
 
-@permission_required('is_superuser', raise_exception=True)
+@permission_required('is_superuser', login_url='/admins/login/')
 def GetInstructor(request, pk):
 	instructor = get_object_or_404(Instructor,pk=pk)
 
 	return render(request,'admins/course.html', {'form' : form })
 
-@permission_required('is_superuser', raise_exception=True)
+@permission_required('is_superuser', login_url='/admins/login/')
 def AddStudent(request):
 	error_message=''
 	if request.method == "POST":
@@ -206,7 +229,7 @@ def AddStudent(request):
 			'error_message' : error_message,
 		})
 
-@permission_required('is_superuser', raise_exception=True)
+@permission_required('is_superuser', login_url='/admins/login/')
 def AddStudents(request):
 	if request.method == 'POST':
 		logger.info(request.FILES.get('csv_file'))

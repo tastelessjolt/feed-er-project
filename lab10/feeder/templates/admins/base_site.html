@@ -27,7 +27,7 @@
         <ul id="nav-mobile" class="left hide-on-med-and-down">
           <li><a href="{% url 'admins:index' %}"> {{ user.get_full_name }} </a> </li>
           <li><a href="{% url 'admins:addstudent' %}">Add Student</a> </li>
-          <li><a href="">Assign Courses</a> </li>
+
           {% block name %}
             
           {% endblock %}
@@ -49,7 +49,7 @@
 
 {% endblock %}
 </div>
-<script type="text/javascript" src="http://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script type="text/javascript" src="{% static 'admins/jquery-3.1.0.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'feeder/materialize.js' %}"></script>
 <script type="text/javascript" src="{% static 'admins/jquery.formset.js' %}"></script>
 
