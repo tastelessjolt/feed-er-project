@@ -14,7 +14,14 @@ def StudentLogin(request):
 	if request.method == "GET":
 		return HttpResponse("Yoo. You GET me. :P")
 	else :
-		return HttpResponse(request.POST)
+		user = authenticate(username=request.POST['email'], password=request.POST['password'])
+		if user is not None:
+			if hasattr(user, 'student'):
+				login(request, user)
+				return HttpResponse(json(user))
+			return HttpResponse(json(('message',"You are not allowed here")))
+		return HttpResponse(json(('message',"Wrong username or password")))
+
 
 def LoginView(request):
 	if request.method == "POST":
@@ -29,7 +36,7 @@ def LoginView(request):
 				login(request, user)
 				welcome = "Welcome, " + user.get_full_name()
 				return render(request, "feeder/index.html", {
-					'error_message' : welcome
+					'error_message' : welcome,
 				})
 			else :
 				return HttpResponseRedirect(reverse('feeder:login',{'error_message' : "Students cannot login here"}))
@@ -37,7 +44,7 @@ def LoginView(request):
 			form = LoginForm(request.POST)
 			return render(request, "feeder/login.html", {
 				'form' : form,
-				'error_message' : "Wrong email or password"
+				'error_message' : "Wrong email or password",
 			})
 				
 	else :
@@ -79,7 +86,7 @@ def RegisterView(request):
 	else :
 		form = InstructorForm()
 		error_message=''
-	return render(request, 'feeder/login.html',{
+	return render(request, 'feeder/register.html',{
 			'form' : form,
 			'error_message' : error_message,
 		})

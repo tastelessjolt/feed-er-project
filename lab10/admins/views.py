@@ -10,7 +10,7 @@ from django.forms.models import model_to_dict
 from django.forms import formset_factory, inlineformset_factory
 from django.utils import timezone
 import logging
-import csv, io
+import csv, io, json
 
 # Create your views here.
 
@@ -68,14 +68,18 @@ def GetCourse(request, pk):
 	InstructorFormSet = formset_factory(InstructorForm,extra=1) 
 	studentlist = course.student_set.all()
 	allstudents = Student.objects.all()
-	iformset = InstructorFormSet(initial=insform) # initial=course.instructor_set.all().values()
-	logger.info(iformset)
-	return render(request,'admins/course.html',{
-		'cform' : courseform,
-		'iformset' : iformset,
-		'studentlist' : studentlist,
-		'allstudents' : allstudents,
-	})
+	iformset = InstructorFormSet(initial=insform)
+	if request.method == "POST":
+		return HttpResponse(str(json.load(request.POST)))	
+	else :
+		logger.info(iformset)
+		return render(request,'admins/course.html',{
+			'cform' : courseform,
+			'iformset' : iformset,
+			'studentlist' : studentlist,
+			'allstudents' : allstudents,
+			'course' : course,
+		})
 
 @permission_required('is_superuser', raise_exception=True)
 def AddCourse(request):

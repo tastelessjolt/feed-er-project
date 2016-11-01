@@ -14,52 +14,89 @@
 	<div class="col s6">
 		{{ iformset.as_p }}
 		{{ iformset.management_form }}
+<button type="submit" class="btn-floating btn-large waves-effect waves-light red right"><i class="material-icons">send</i></button>
 	</div>
 	</div>
 	</div>
 </div>
 </div>
 </div>
-<div class="row">
-<div class="card col s6">
-	<div class="card-content">
-		{% if studentlist %}
-			<table>
-		        <thead>
-		          <tr>
-		              <th data-field="name">Name</th>
-		              <th data-field="username">Username</th>
-		          </tr>
-		        </thead>
 
-		        <tbody>
-			{% for student in studentlist %}
-		          <tr>
-		            <td>{{ student.user.get_fullname }}</td>
-		            <td>{{ student.user.username }}</td>
-		          </tr>
-			{% endfor %}
-		        </tbody>
-		      </table>
+<div class="row">
+<div class="card col s6" style="max-height: 400px; overflow: auto">
+	<div class="card-content" id="selected">
+		{% if studentlist %}
+		<h3 class="center no-studs" hidden="hidden">No students registered</h3>
+			<div class="checks" id="{{ student.user.username }}"></div>
+			{% if student.course.id == course.id %}					 
+				<input type="checkbox" id="{{ student.user.username }}" name="{{ student.id }}" checked="true">
+				<label for="{{ student.user.username }}">{{ student.user.get_full_name }}</label> </br>
+			{% endif %}
 		{% else %}
-			<h3 class="center">No students registered</h3>
+			<h3 class="center no-studs">No students registered</h3>
 		{% endif %}		
 	</div>
 </div>
-<div class="card col s6">
-	<div class="card-content">
+<div class="card col s6" style="max-height: 400px; overflow: auto;">
+	<div class="card-content" id="non">
 		{% if allstudents %}
-			<select multiple="multiple" class="allstudents" name="All Students" title="All Students">
+			{# <select multiple="multiple" class="allstudents" name="All Students" title="All Students"> #}
+			<h3 class="center non-reg" hidden="hidden">No students registered</h3>
 				{% for student in allstudents %}
-					<option value="{{ student.user.username }}">{{ student.user.username }}</option>
+				<div class="checks" id="{{ student.user.username }}">
+					{% if student.course.id != course.id %}	
+						<input type="checkbox" id="{{ student.user.username }}" name="{{ student.id }}" >
+					{% endif %}
+					<label for="{{ student.user.username }}">{{ student.user.get_full_name }}</label> </br>
+				</div>
 				{% endfor %}
-			</select>
+			{# </select> #}
 		{% else %}
-			<h3 class="center">No students registered</h3>
+			<h3 class="center non-reg">No students registered</h3>
 		{% endif %}		
 	</div>
 </div>
 </form>
+
+{% block script %}
+<script type="text/javascript"> 
+
+
+	$(".checks").click(function(){
+		var select=$("#selected")[0];
+		var non = $("#non")[0];
+		var x = this;
+		var labela = $(".no-studs")[0]
+		var labelb = $(".non-reg")[0]
+		var input = x.childNodes[1];
+		
+		input.checked = !input.checked;
+		if (select.contains(x)) {
+
+			x.remove();
+			non.appendChild(x);
+		}
+		else if(non.contains(x)) {
+			x.remove();
+			select.appendChild(x);
+		}
+
+		if(non.childElementCount > 1 && !labela.hidden){
+			labela.hidden = true;
+		}
+		else if(non.childElementCount == 1) {
+			labelb.hidden = false;
+		}
+		if(select.childElementCount > 1 && !labelb.hidden){
+			labelb.hidden = true;
+		}
+		else if(select.childElementCount == 1) {
+			labela.hidden = false;
+		}
+	});
+</script>
+{% endblock %}
+
 {% endblock %}
 
 {% block navbar %}
@@ -67,4 +104,5 @@
     <li><a href="{% url 'admins:courses' %}">Courses</a></li>
     <li><a href="{% url 'admins:instructors' %}">Instructor</a></li>
     <li><a href="{% url 'admins:logout' %}">Sign out</a></li>
+
 {% endblock %}
