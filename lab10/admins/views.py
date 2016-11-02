@@ -243,12 +243,13 @@ def AddStudent(request):
 			except (KeyError, User.DoesNotExist):
 				user = User()
 				student = Student()
-				user.first_name=request.POST['first_name']
-				user.last_name=request.POST['last_name']
-				user.username=request.POST['username']
-				user.set_password(request.POST['password'])
+				user.first_name=form.cleaned_data['first_name']
+				user.last_name=form.cleaned_data['last_name']
+				user.username=form.cleaned_data['username']
+				user.set_password(form.cleaned_data['password'])
 				user.save()
 				student.user_id = user.id
+				student.roll_no = form.cleaned_data['roll_no']
 				student.save()
 				message = "Student Registration Successful"
 				return render(request,'admins/success.html', {'message' : message})
@@ -258,6 +259,7 @@ def AddStudent(request):
 		form = StudentForm()
 	return render(request, 'admins/add_student.html',{
 			'form' : form,
+			# 'rollform' : rollform
 			'error_message' : error_message,
 		})
 
@@ -271,23 +273,24 @@ def AddStudents(request):
 			row = row.split(',')
 			# return HttpResponse(row)
 			try: 
-				User.objects.get(username=row[2])
+				User.objects.get(username=row[3])
 			except (KeyError, User.DoesNotExist):
-				user = User(first_name=row[0], last_name=row[1], username=row[2])
+				user = User(first_name=row[0], last_name=row[1], username=row[3])
 				form = StudentForm(instance=user)
 				form.is_valid()
 				if form.errors == {} :
-					user.set_password(row[3])
+					user.set_password(row[4])
 					user.save()
 					student = Student()
 					student.user_id = user.id
+					student.roll_no = row[2]
 					student.save()
 				else :
 					logger.info("It has Errors ")
-					not_valid = not_valid + "," + str(row[2])
+					not_valid = not_valid + ", <br> " + str(row[3])
 			else :
 				logger.info("User already there")
-				not_valid = not_valid + "," + str(row[2])
+				not_valid = not_valid + ", <br>" + str(row[3])
 
 		if not_valid == "" :
 			message = "All students successfully added"

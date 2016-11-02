@@ -76,7 +76,7 @@ class Instructor(models.Model):
 class Student(models.Model):
 	course = models.ManyToManyField(Course, blank = True, default=1)
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
-	roll_no = models.PositiveIntegerField()
+	roll_no = models.CharField(max_length=11)
 	# __str__ for printing
 	def __str__(self):
 		return self.user.get_full_name()

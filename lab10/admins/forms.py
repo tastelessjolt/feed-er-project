@@ -27,9 +27,14 @@ class UserForm(forms.ModelForm):
         fields = ('email',)
 
 class StudentForm(forms.ModelForm):
+	first_name = User._meta.get_field('first_name').formfield(required=True)
+	last_name = User._meta.get_field('last_name').formfield(required=True)
+	roll_no = forms.CharField()
+	def clean(self):
+		return self.cleaned_data
 	class Meta:
 		model = User
-		fields = ['first_name', 'last_name' , 'username', 'password']
+		fields = ['username', 'password']
 		widgets = {
 			'password' : forms.PasswordInput()
 		}
@@ -55,7 +60,7 @@ class FeedbackForm(forms.ModelForm):
 
 class QuestionForm(forms.ModelForm):
 	def clean(self):
-		if self.cleaned_data['question_text'] == "":
+		if self.cleaned_data['question_text'] == '':
 			raise ValidationError(_('Invalid value'), code='invalid')
 		return self.cleaned_data
 	question_text = forms.CharField(
