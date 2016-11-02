@@ -17,7 +17,9 @@ class CourseForm(forms.ModelForm):
         fields = '__all__'
 
 class InstructorForm(forms.Form):
-	username = forms.EmailField()		
+	class Meta:
+		model = Instructor
+		fields = ('course')		
 
 class UserForm(forms.ModelForm):
     class Meta:
@@ -38,7 +40,10 @@ class GetInstructorForm(forms.Form):
 	first_name = User._meta.get_field('first_name').formfield()
 	last_name = User._meta.get_field('last_name').formfield()
 	email = User._meta.get_field('username').formfield()
+	# course = forms.MultipleChoiceField()
 	course = Instructor._meta.get_field('course').formfield()
+	def clean(self):
+		return self.cleaned_data
 
 class FeedbackForm(forms.ModelForm):
 	class Meta:
@@ -53,9 +58,14 @@ class QuestionForm(forms.ModelForm):
 		if self.cleaned_data['question_text'] == "":
 			raise ValidationError(_('Invalid value'), code='invalid')
 		return self.cleaned_data
+	question_text = forms.CharField(
+        max_length=300,
+        required=True,
+    )
 	class Meta:
 		model = Question
 		exclude = ['feedback']
+
 
 class AssignmentForm(forms.ModelForm):
 	class Meta:

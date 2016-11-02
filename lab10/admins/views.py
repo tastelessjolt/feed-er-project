@@ -35,9 +35,13 @@ def LoginView(request):
 				
 	else :
 		if request.user.is_authenticated:
-			return HttpResponseRedirect(reverse('admins:index'))
-		else :
-			form = LoginForm()
+			usr = get_object_or_404(User, username=str(request.user))
+			# return HttpResponse(usr.instructor)
+			if not hasattr(usr, 'instructor') and not hasattr(usr, 'student') :
+				return HttpResponseRedirect(reverse('admins:index'))
+			else :
+				error_message='You are not allowed here.'
+		form = LoginForm()
 	return render(request, "admins/login.html", {
 			'form' : form, 
 			'error_message' : error_message,
@@ -48,7 +52,9 @@ def IndexView(request):
 	return render(request, "admins/index.html", {
 		'user' : request.user, 
 		'instructors': Instructor.objects.all(), 
-		'courses' : Course.objects.all()
+		'courses' : Course.objects.all(),
+		'assignments' : Assignment.objects.order_by('deadline'),
+		'feedbacks' : Feedback.objects.order_by('deadline'),
 	})
 
 @permission_required('is_superuser', login_url='/admins/login/')
@@ -68,6 +74,7 @@ def GetCourse(request, pk):
 	instructorlist = course.instructor_set.all()
 	allstudents = Student.objects.all()
 	allinstructors = Instructor.objects.all()
+	# alldeadlines = course.feedback_set.all() | course.assignment_set.all()
 	if request.method == "POST":
 		st = ""
 		for stud in studentlist :
@@ -101,6 +108,7 @@ def GetCourse(request, pk):
 			'instructorlist' : instructorlist,
 			'allstudents' : allstudents,
 			'allinstructors' : allinstructors,
+			# 'alldeadlines' : alldeadlines,
 			'course' : course,
 		})
 
@@ -118,32 +126,33 @@ def AddCourse(request):
 		qsformset1 = QuestionFormSet(request.POST, prefix='qs1')
 		qsformset2 = QuestionFormSet(request.POST, prefix='qs2')
 		
-		if courseform.is_valid() and fbform1.is_valid() and fbform2.is_valid() and asformset.is_valid() and qsformset1.is_valid() and qsformset2.is_valid() :
-			qsformset1.is_valid()	
-			qsformset2.is_valid()
-			course = courseform.save()
-			for asform in asformset :
-				assign = asform.save(commit=False)
-				assign.course_id = course.id
-				assign.pub_date = timezone.now()
-				assign.save()
-			fb1 = fbform1.save(commit=False)
-			fb2 = fbform2.save(commit=False)
-			fb1.course_id = course.id
-			fb1.pub_date = timezone.now()
-			fb1.save()
-			for qsform in qsformset1 :
-				qs = qsform.save(commit=False)
-				qs.feedback_id = fb1.id
-				qs.save()
-			fb2.course_id = course.id
-			fb2.pub_date = timezone.now()
-			fb2.save()
-			for qsform in qsformset2 :
-				qs = qsform.save(commit=False)
-				qs.feedback_id = fb2.id
-				qs.save()
-			return render(request,'admins/success.html', {'message' : "Course has been registered"})
+		if courseform.has_changed() or fbform1.has_changed() or fbform2.has_changed() or asformset.has_changed() or qsformset1.has_changed() or qsformset2.has_changed() :
+			if courseform.is_valid() and fbform1.is_valid() and fbform2.is_valid() and asformset.is_valid() and qsformset1.is_valid() and qsformset2.is_valid() :
+				qsformset1.is_valid()	
+				qsformset2.is_valid()
+				course = courseform.save()
+				for asform in asformset :
+					assign = asform.save(commit=False)
+					assign.course_id = course.id
+					assign.pub_date = timezone.now()
+					assign.save()
+				fb1 = fbform1.save(commit=False)
+				fb2 = fbform2.save(commit=False)
+				fb1.course_id = course.id
+				fb1.pub_date = timezone.now()
+				fb1.save()
+				for qsform in qsformset1 :
+					qs = qsform.save(commit=False)
+					qs.feedback_id = fb1.id
+					qs.save()
+				fb2.course_id = course.id
+				fb2.pub_date = timezone.now()
+				fb2.save()
+				for qsform in qsformset2 :
+					qs = qsform.save(commit=False)
+					qs.feedback_id = fb2.id
+					qs.save()
+				return render(request,'admins/success.html', {'message' : "Course has been registered"})
 
 		return render(request,'admins/add_course.html',{
 				'cform' : courseform,
@@ -196,8 +205,31 @@ def AllInstructors(request):
 @permission_required('is_superuser', login_url='/admins/login/')
 def GetInstructor(request, pk):
 	instructor = get_object_or_404(Instructor,pk=pk)
-
-	return render(request,'admins/course.html', {'form' : form })
+	crs =  [x.course_code for x in instructor.course.all()]
+	init = { 
+		'first_name' : instructor.user.first_name ,
+		'last_name' : instructor.user.last_name ,
+		'email' : instructor.user.username ,
+		'course' : crs ,
+	}
+	if request.method == "POST" :
+		iform = GetInstructorForm(request.POST, initial=init)
+		# st = ''
+		# for i in request.POST.get('course') :
+		# 	st = st + ', ' + User.objects.get(pk=i).__str__()
+		# return HttpResponse( st )
+		if iform.has_changed():
+			if iform.is_valid():
+				instructor.user.first_name = iform.cleaned_data['first_name']
+				instructor.user.last_name = iform.cleaned_data['last_name']
+				instructor.user.username = iform.cleaned_data['email']
+				for x in instructor.course.all():
+					instructor.course.remove(x)
+				for x in iform.cleaned_data['course']:
+					instructor.course.add(x)
+	else :
+		iform = GetInstructorForm(initial=init)
+	return render(request,'admins/instructor.html', {'iform' : iform })
 
 @permission_required('is_superuser', login_url='/admins/login/')
 def AddStudent(request):

@@ -7,11 +7,25 @@ from django.contrib.auth.models import User, AbstractBaseUser, UserManager, Base
 
 
 class Course(models.Model):
-	course_code = models.CharField(max_length=6)
-	course_name = models.CharField(max_length=40)
+	SPRING = 'SP'
+	AUTUMN = 'AU'
+	SUMMER = 'SU'
 
+	SEMESTERS = (
+		(SPRING, 'Spring'),
+		(AUTUMN, 'Autumn'),
+		(SUMMER, 'Summer'),
+		)
+
+	course_code = models.CharField(max_length=6, unique=True)
+	course_name = models.CharField(max_length=40, blank=False)
+	semester = models.CharField(
+		max_length=2,
+		choices=SEMESTERS,
+		)
 	def __str__(self):
 		return self.course_name + '(' + self.course_code + ')'
+
 
 class Assignment(models.Model):
 	assignment_name = models.CharField(max_length=50, verbose_name = "Exam/Assignment")
@@ -26,7 +40,7 @@ class Assignment(models.Model):
 class Feedback(models.Model):
 	fb_name = models.CharField(max_length=100, verbose_name='Feedback Name')
 	pub_date = models.DateTimeField('date published')
-	deadline = models.DateTimeField('deadline',null=False)
+	deadline = models.DateTimeField('deadline',null=False, blank=False)
 	course = models.ForeignKey(Course, on_delete=models.CASCADE)
 	class Meta:
 		verbose_name = "Feedback"
@@ -37,7 +51,7 @@ class Feedback(models.Model):
 
 
 class Question(models.Model):
-	question_text = models.CharField(max_length=300, null=False)
+	question_text = models.CharField(max_length=300, blank=False)
 	feedback = models.ForeignKey(Feedback, on_delete=models.CASCADE)
 	class Meta:
 		verbose_name = "Question"
@@ -47,7 +61,7 @@ class Question(models.Model):
 		return self.question_text
 
 class Answer(models.Model):
-	answer = models.CharField(max_length=500)
+	answer = models.CharField(max_length=500, blank=False)
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
 	def __str__(self):
 		return self.Answer
@@ -62,6 +76,7 @@ class Instructor(models.Model):
 class Student(models.Model):
 	course = models.ManyToManyField(Course, blank = True, default=1)
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
+	roll_no = models.PositiveIntegerField()
 	# __str__ for printing
 	def __str__(self):
 		return self.user.get_full_name()
