@@ -6,21 +6,29 @@ from .forms import InstructorForm, LoginForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.core import serializers
 import urllib.request
-import json	
+import json, logging
 # Create your views here.
 
+logger = logging.getLogger('django')
+
+
 def StudentLogin(request):
+	JSONSerializer = serializers.get_serializer("json")
+	# logger.info(request)
 	if request.method == "GET":
-		return HttpResponse("Yoo. You GET me. :P")
-	else :
-		user = authenticate(username=request.POST['email'], password=request.POST['password'])
+		return render(request, "feeder/csrf.html")
+	elif request.method == "POST" :
+		logger.info(str(request));
+		user = authenticate(username=request.POST['username'], password=request.POST['password'])
 		if user is not None:
 			if hasattr(user, 'student'):
 				login(request, user)
-				return HttpResponse(json(user))
-			return HttpResponse(json(('message',"You are not allowed here")))
-		return HttpResponse(json(('message',"Wrong username or password")))
+				return HttpResponse("success")
+			return HttpResponse("You are not allowed here")
+		return HttpResponse("Wrong username or password")
 
 
 def LoginView(request):
@@ -55,7 +63,7 @@ def LoginView(request):
 	return render(request, "feeder/login.html", {'form' : form  } )
 # @login_required(login_url='/feeder/login/')
 
-@permission_required('not is_superuser', login_url='/feeder/login/')
+@login_required(login_url='/feeder/login/')
 def IndexView(request):
 	return render(request, "feeder/index.html", {'user' : request.user })
 
