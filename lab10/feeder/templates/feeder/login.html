@@ -77,8 +77,8 @@ function post(path, params, method) {
 }
 
 function onSignIn(googleUser) {
-  var profile = googleUser.getBasicProfile();
-  console.log('Email: ' + profile.getEmail());
+  // var profile = googleUser.getBasicProfile();
+  // console.log('Email: ' + profile.getEmail());
 
 
   var id_token = googleUser.getAuthResponse().id_token;

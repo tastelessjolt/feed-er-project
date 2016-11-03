@@ -5,7 +5,7 @@ from django.views import generic
 from .forms import InstructorForm, LoginForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 import urllib.request
 import json	
 # Create your views here.
@@ -53,8 +53,9 @@ def LoginView(request):
 		else :
 			form = LoginForm()
 	return render(request, "feeder/login.html", {'form' : form  } )
+# @login_required(login_url='/feeder/login/')
 
-@login_required(login_url='/feeder/login/')
+@permission_required('not is_superuser', login_url='/feeder/login/')
 def IndexView(request):
 	return render(request, "feeder/index.html", {'user' : request.user })
 
