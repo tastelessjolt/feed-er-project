@@ -1,4 +1,4 @@
-package com.example.ud.feeder27;
+package com.feeder.audacity.feeder;
 
 import org.junit.Test;
 
