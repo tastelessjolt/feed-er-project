@@ -30,7 +30,7 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    public static final String LOGIN_URL = "http://simplifiedcoding.16mb.com/UserRegistration/volleyLogin.php";
+    public static final String LOGIN_URL = "http://192.168.100.9:8027/feeder/studentlogin/";
 
     public static final String KEY_USERNAME="username";
     public static final String KEY_PASSWORD="password";
