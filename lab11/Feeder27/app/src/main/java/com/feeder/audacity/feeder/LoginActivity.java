@@ -94,7 +94,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         CookieManager cookieManager = CookieManager.getInstance();
         Log.d("expiry",cookieManager.getCookie(Constants.DOMAIN));
-        if(false /*!cookieManager.getCookie(Constants.DOMAIN).equals("")*/ ){
+        if( !cookieManager.getCookie(Constants.DOMAIN).equals("") ){
             Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);
             finish();
