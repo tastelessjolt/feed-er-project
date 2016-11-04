@@ -97,7 +97,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         try {
 //            if(false){
             if (!cookieManager.getCookie(Constants.DOMAIN).equals("")) {
-                Intent intent = new Intent(this, MainActivity.class);
+                Intent intent = new Intent(this, HomeActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -458,7 +458,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                Intent intent = new Intent(context,MainActivity.class);
+                Intent intent = new Intent(context,HomeActivity.class);
                 startActivity(intent);
                 finish();
             }
