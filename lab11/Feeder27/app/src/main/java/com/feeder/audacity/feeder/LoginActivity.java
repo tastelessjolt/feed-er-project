@@ -93,11 +93,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CookieManager cookieManager = CookieManager.getInstance();
-        Log.d("expiry",cookieManager.getCookie(Constants.DOMAIN));
-        if( !cookieManager.getCookie(Constants.DOMAIN).equals("") ){
-            Intent intent = new Intent(this,MainActivity.class);
-            startActivity(intent);
-            finish();
+//        Log.d("expiry",cookieManager.getCookie(Constants.DOMAIN));
+        try {
+            if (!cookieManager.getCookie(Constants.DOMAIN).equals("")) {
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }
+        catch (java.lang.NullPointerException e) {
+            Log.d("No cookie found",e.toString());
         }
         setContentView(R.layout.activity_login);
         // Set up the login form.
