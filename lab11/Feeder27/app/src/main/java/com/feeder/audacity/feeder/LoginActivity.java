@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -83,6 +84,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private SharedPreferences cookieData;
+    private SharedPreferences.Editor editor;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -92,19 +95,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CookieManager cookieManager = CookieManager.getInstance();
+        cookieData = getSharedPreferences("cookie.dat",MODE_PRIVATE);
+        editor = cookieData.edit();
+        String cookie = cookieData.getString("cookie",null);
+//        CookieManager cookieManager = CookieManager.getInstance();
 //        Log.d("expiry",cookieManager.getCookie(Constants.DOMAIN));
-        try {
-//            if(false){
-            if (!cookieManager.getCookie(Constants.DOMAIN).equals("")) {
-                Intent intent = new Intent(this, HomeActivity.class);
-                startActivity(intent);
-                finish();
-            }
+
+        if (cookie != null) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
         }
-        catch (java.lang.NullPointerException e) {
-            Log.d("No cookie found",e.toString());
-        }
+
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mUsernameView = (AutoCompleteTextView) findViewById(R.id.username);
@@ -433,6 +435,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 try {
                     Log.d("cookie", con2.getHeaderField("Set-Cookie"));
                     cookieManager.setCookie(Constants.DOMAIN, con2.getHeaderField("Set-Cookie"));
+                    editor.putString("cookie",con2.getHeaderField("Set-Cookie").toString());
+                    editor.commit();
                 }
                 catch (NullPointerException e) {
                     return false;
@@ -448,7 +452,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
 
             status = Constants.LOGINOK;
-            // TODO: register the new account here.
             return true;
         }
 

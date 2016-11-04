@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import User, AbstractBaseUser, UserManager, BaseUserManager
 
 # Create your models here.
@@ -34,6 +35,9 @@ class Assignment(models.Model):
 	deadline = models.DateTimeField('deadline',null=False)
 	course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
+	def is_past_deadline(self):
+		return self.pub_date < timezone.now()
+
 	def __str__(self):
 		return self.assignment_name
 
@@ -50,6 +54,11 @@ class Feedback(models.Model):
 		return self.fb_name
 
 
+## Yes/No
+## Multiple choice with one answer 
+## Multiple choice with multiple answers answer 
+## Comment area 
+## Rating Scale
 class Question(models.Model):
 	TEXT_ANSWER = 'text'
 	RATING = 'rate'
@@ -73,7 +82,7 @@ class Answer(models.Model):
 	answer = models.CharField(max_length=500, blank=False)
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
 	def __str__(self):
-		return self.Answer
+		return self.answer
 
 class RatingAnswer(models.Model):
 	question = models.OneToOneField(Question)
@@ -82,6 +91,10 @@ class RatingAnswer(models.Model):
 	responses3 = models.PositiveIntegerField()
 	responses4 = models.PositiveIntegerField()
 	responses5 = models.PositiveIntegerField()
+	def __str__(self) :
+		return 'Answer to ' + self.question.__str__()
+	def count(self):
+		return self.responses1 + self.responses2 + self.responses3 + self.responses4 + self.responses5
 
 class Instructor(models.Model):
 	course = models.ManyToManyField(Course, blank = True, default=1)

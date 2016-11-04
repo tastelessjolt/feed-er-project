@@ -179,7 +179,8 @@ def AllAssignments(request):
 
 @login_required(login_url='/feeder/login')
 def AssignmentView(request,pk):
-	return HttpResponse()
+	assignment = get_object_or_404(Assignment,pk = pk)
+	return render(request, 'feeder/assignment.html', {'assignment' : assignment})
 
 def RegisterView(request):
 	if request.method == "POST":
