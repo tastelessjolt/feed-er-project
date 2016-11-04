@@ -95,6 +95,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         CookieManager cookieManager = CookieManager.getInstance();
 //        Log.d("expiry",cookieManager.getCookie(Constants.DOMAIN));
         try {
+//            if(false){
             if (!cookieManager.getCookie(Constants.DOMAIN).equals("")) {
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
@@ -240,7 +241,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic __________________Done
-        return true;
+        return !password.equals("");
     }
 
     /**
