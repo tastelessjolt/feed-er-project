@@ -5,7 +5,7 @@ package com.feeder.audacity.feeder;
  */
 
 public class Constants {
-    public static String DOMAIN="http://192.168.0.134:8000/";
+    public static String DOMAIN="http://10.0.2.2:8027/";
     public static String LOGIN=DOMAIN+"feeder/studentlogin/";
     public static int LOGINOK = 0;
     public static int NETWORKERR = 1;
