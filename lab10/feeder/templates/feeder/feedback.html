@@ -4,24 +4,69 @@
 
 
 {% block content %}
-	<h3>{{ feedback.fb_name }} </h3> <hr>
-	{% for question in questions %}
-		  <div class="section">
-		    <h5> {{ question.question_text }} </h5>
-		    {% if question.question_type == 'text' and question.answer_set != None %}
-		    	<p> {{ question.answer_set }} </p>
-		    {% elif question.rating_answer %}
-		    	<p> {{ question.rating_answer.responses1 }} </p>
-		    	<p> {{ question.rating_answer.responses2 }} </p>
-		    	<p> {{ question.rating_answer.responses3 }} </p>
-		    	<p> {{ question.rating_answer.responses4 }} </p>
-		    	<p> {{ question.rating_answer.responses5 }} </p>
-		    {% else %}
-		    	<p> No responses yet. </p>
-		    {% endif %}
-		  </div>
-		<div class="divider"></div>
-	{% endfor %} 
+	<div class="card">
+		<div class="card-content">
+		<h3 class="center">{{ feedback.fb_name }} <i class="material-icons">assignment</i> </h3> <hr>
+		{% for question in questions %}
+			  <div class="section col s9">
+			    <h5></h5>> {{ question.question_text }} </h5>
+			    {% if question.question_type == 'text' and question.answer_set.all %}
+			    	<p class="center"> <b> No. of responses : {{ question.answer_set.count }} </b> </p>
+			    	<div class="row">
+			    	<table class="striped col s8 offset-s2">
+			    	<thead>
+			    		<tr>
+			    			<td><b> Index </b> </td>
+			    			<td><b> Response </b> </td>
+			    		</tr>
+			    	</thead>
+			    	<tbody>
+			    	{% for answer in question.answer_set.all %}
+			    		<tr>
+			    			<td> {{ forloop.counter }} </td>
+			    			<td> {{ answer }} </td>
+			    		</tr> 
+			    	{% endfor %}
+			    	</tbody>
+			    	</table>
+			    	</div>
+			    {% elif question.ratinganswer %}
+				    <p class="center"><b> No. of responses : {{ question.ratinganswer.count }} </b></p>
+				    <div class="row">
+				    <table class="striped centered col offset-s5 s2">
+
+				    <tbody>	
+				    	<tr>
+				    		<td>Rating 1</td>
+				    		<td> {{ question.ratinganswer.responses1 }} </td>
+				    	</tr>
+				    	<tr>
+				    		<td>Rating 2</td>
+				    		<td> {{ question.ratinganswer.responses2 }} </td>
+				    	</tr>
+				    	<tr>
+				    		<td>Rating 3</td>
+				    		<td> {{ question.ratinganswer.responses3 }} </td>
+				    	</tr>
+				    	<tr>
+				    		<td>Rating 4</td>
+				    		<td> {{ question.ratinganswer.responses4 }} </td>
+				    	</tr>
+				    	<tr>
+				    		<td>Rating 5</td>
+				    		<td> {{ question.ratinganswer.responses5 }} </td>
+				    	</tr>
+			    	</tbody>
+			    	</table>
+			    	</div>
+			    {% else %}
+			    	<p> No responses yet. </p>
+			    {% endif %}
+			  </div>
+			<div class="divider"></div>
+		{% endfor %} 
+		</div>
+		</div>
 {% endblock %}
 
 {% block navbar %}
