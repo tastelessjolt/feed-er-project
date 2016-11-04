@@ -51,8 +51,17 @@ class Feedback(models.Model):
 
 
 class Question(models.Model):
+	TEXT_ANSWER = 'text'
+	RATING = 'rate'
+
+	TYPES = (
+		(RATING, 'Rating Response'),
+		(TEXT_ANSWER, 'Text Response'),
+		)
 	question_text = models.CharField(max_length=300, blank=False)
 	feedback = models.ForeignKey(Feedback, on_delete=models.CASCADE)
+	question_type = models.CharField(max_length=4, choices=TYPES)
+
 	class Meta:
 		verbose_name = "Question"
 		verbose_name_plural = "Questions"
@@ -65,6 +74,14 @@ class Answer(models.Model):
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
 	def __str__(self):
 		return self.Answer
+
+class RatingAnswer(models.Model):
+	question = models.OneToOneField(Question)
+	responses1 = models.PositiveIntegerField()
+	responses2 = models.PositiveIntegerField()
+	responses3 = models.PositiveIntegerField()
+	responses4 = models.PositiveIntegerField()
+	responses5 = models.PositiveIntegerField()
 
 class Instructor(models.Model):
 	course = models.ManyToManyField(Course, blank = True, default=1)

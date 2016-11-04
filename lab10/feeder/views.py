@@ -1,13 +1,17 @@
-from django.shortcuts import render, HttpResponse, HttpResponseRedirect
-from .models import Instructor, Course, Student
+from django.shortcuts import render, HttpResponse, HttpResponseRedirect, get_object_or_404,get_list_or_404, Http404
+from .models import *
 from django.urls import reverse
+from django.utils import timezone
 from django.views import generic
-from .forms import InstructorForm, LoginForm
+from .forms import *
+from admins.forms import QuestionForm
 from django.contrib.auth.models import User
+from django.forms.models import model_to_dict
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.core import serializers
+from django.forms import formset_factory
 import urllib.request
 import json, logging
 # Create your views here.
@@ -26,7 +30,8 @@ def StudentLogin(request):
 		if user is not None:
 			if hasattr(user, 'student'):
 				login(request, user)
-				return HttpResponse("success")
+				usr = model_to_dict(user)
+				return render(request,'feeder/csrf.html',{'user' : usr})
 			return HttpResponse("You are not allowed here")
 		return HttpResponse("Wrong username or password")
 
@@ -65,12 +70,116 @@ def LoginView(request):
 
 @login_required(login_url='/feeder/login/')
 def IndexView(request):
-	return render(request, "feeder/index.html", {'user' : request.user })
+	courses = Course.objects.all()
+	assignments = Assignment.objects.filter(deadline__gt=timezone.now()).order_by('deadline')
+	context = {
+		'user' : request.user,
+		'courses' : courses,
+		'assignments' : assignments,
+		}
+	return render(request, "feeder/index.html", context)
 
 @login_required(login_url='/feeder/login/')
 def Logout(request):
 	logout(request)
 	return HttpResponseRedirect(reverse('feeder:login'))
+
+@login_required(login_url='/feeder/login/')
+def AddFeedback(request):
+	if request.method == "POST":
+		error_message=''
+		fb = FeedbackForm(request.POST)
+		QuestionFormSet = formset_factory(QuestionForm)
+		qsformset = QuestionFormSet(request.POST)
+		if fb.is_valid() :
+			if qsformset.is_valid() :
+				feedback = fb.save(commit=False)
+				feedback.pub_date = timezone.now()
+				feedback.save()
+				for qsform in qsformset :
+					question = qsform.save(commit=False)
+					question.feedback_id = feedback.id
+					question.save()  
+				return render(request, 'feeder/in_success.html', { 'message' : 'Feedback form created successfully' })
+			else :
+				error_message='Invalid questions'
+		else :
+			error_message='Invalid feedback form data' 
+		context = { 
+			'fb' : fb,
+			'qsformset' : qsformset,
+			'error_message' : error_message,
+ 		}
+		return render(request, 'feeder/add_feedback.html', context)
+	else :
+		fb = FeedbackForm()
+		QuestionFormSet = formset_factory(QuestionForm)
+		qsformset = QuestionFormSet()
+		context = { 
+			'fb' : fb,
+			'qsformset' : qsformset,
+ 		}
+		return render(request,'feeder/add_feedback.html', context)
+@login_required(login_url='/feeder/login')
+def AllFeedbacks(request):
+	feedbacks = Feedback.objects.filter(deadline__gt=timezone.now()).order_by('deadline')
+	old_feedbacks = Feedback.objects.filter(deadline__lt=timezone.now()).order_by('deadline').reverse()
+	context = {
+		'feedbacks' : feedbacks,
+		'old_feedbacks' : old_feedbacks,
+	}
+	return render(request, 'feeder/feedbacks.html', context)
+
+@login_required(login_url='/feeder/login')
+def FeedbackView(request, pk):
+	feedback = get_object_or_404(Feedback, pk = pk)
+	questions = feedback.question_set.all()
+	noneAnswer = Answer.objects.all()
+	context = {
+		'feedback' : feedback,
+		'questions' : questions,
+		# 'noneAnswer' : ,
+	}
+	return render(request, 'feeder/feedback.html', context)
+
+@login_required(login_url='/feeder/login')
+def AddAssignment(request):
+	error_message=''
+	if request.method == 'POST' :
+		assignform = AssignmentForm(request.POST)
+		if assignform.is_valid() :
+			assign = assignform.save(commit = False)
+			assign.pub_date = timezone.now()
+			assign.save()
+			return render(request,'feeder/in_success.html', {'message' : 'Assignment/Exam created and deadline set successfully'})
+		else :	
+			error_message='Invalid data'
+		context = {
+			'assignform' : assignform,
+			'error_message' : error_message,
+		}
+		return render(request, 'feeder/add_assignment.html', context)
+	else :
+		assignform = AssignmentForm()
+		context = {
+			'assignform' : assignform,
+		}
+		return render(request, 'feeder/add_assignment.html', context)
+
+
+@login_required(login_url='/feeder/login')
+def AllAssignments(request):
+	assignments = Assignment.objects.filter(deadline__gt=timezone.now()).order_by('deadline')
+	old_assignments = Assignment.objects.filter(deadline__lt=timezone.now()).order_by('deadline').reverse()
+	context = {
+		'assignments' : assignments,
+		'old_assignments' : old_assignments,
+	}
+	return render(request, 'feeder/assignments.html', context)
+
+@login_required(login_url='/feeder/login')
+def AssignmentView(request,pk):
+	return HttpResponse()
 
 def RegisterView(request):
 	if request.method == "POST":

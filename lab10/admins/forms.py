@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from feeder.models import Course, Student, Instructor, Feedback, Question, Answer, Assignment
 from django.core import validators
+import logging
+logger = logging.getLogger('django')
 
 class LoginForm(forms.ModelForm):
 	class Meta:
@@ -60,7 +62,7 @@ class FeedbackForm(forms.ModelForm):
 
 class QuestionForm(forms.ModelForm):
 	def clean(self):
-		if self.cleaned_data['question_text'] == '':
+		if self.cleaned_data.get('question_text') == '':
 			raise ValidationError(_('Invalid value'), code='invalid')
 		return self.cleaned_data
 	question_text = forms.CharField(

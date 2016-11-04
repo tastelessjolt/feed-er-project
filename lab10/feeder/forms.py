@@ -1,5 +1,5 @@
 from django import forms
-from .models import Instructor, Course, Student
+from .models import *
 from django.contrib.auth.models import User
 
 
@@ -18,4 +18,20 @@ class LoginForm(forms.ModelForm):
 		fields = ['email', 'password']
 		widgets = {
 			'password' : forms.PasswordInput()
+		}
+
+class FeedbackForm(forms.ModelForm):
+	class Meta:
+		model = Feedback
+		exclude = ['pub_date']
+		widgets = {
+			'deadline' : forms.DateTimeInput(attrs={'class':'date-format'}),
+		}
+
+class AssignmentForm(forms.ModelForm):
+	class Meta:
+		model = Assignment
+		exclude = ['pub_date']
+		widgets = {
+			'deadline' : forms.DateTimeInput(attrs={'class':'date-format'}),
 		}

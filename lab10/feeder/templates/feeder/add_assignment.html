@@ -1,0 +1,44 @@
+{% extends "feeder/base_site.html" %}
+{% load static %}
+
+{% block includes %}
+	<link rel="stylesheet" type="text/css" href="{% static 'admins/bootstrap-material-datetimepicker.css' %}">
+{% endblock %}
+
+{% block content %}
+<div style="width: 600px; margin: 0 auto;" class="card white">
+<div class="card-content z-depth-5">
+<style type="text/css">
+	.errorlist {
+		color: red;
+	}
+</style>
+
+<form method="POST">
+	{% csrf_token %}
+
+	{{ assignform }}
+	
+    <button class="btn right" type="submit">Submit<i class="material-icons right"></i></button>
+</form>
+</div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{% static 'admins/moment.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'admins/bootstrap-material-datetimepicker.js' %}"></script>
+<script type="text/javascript">
+	$('.date-format').bootstrapMaterialDatePicker({ format : 'MM/DD/YYYY HH:MM', minDate : new Date() });
+	
+</script>
+{% endblock %}
+
+{% block navbar %}
+    <li><a href="courses">Courses</a></li>
+    <li><a onclick="signOut();" href="{% url 'feeder:logout' %}">Sign out</a></li>
+{% endblock %}
+{% block name %}
+    {{ user.get_full_name }}
+{% endblock %}

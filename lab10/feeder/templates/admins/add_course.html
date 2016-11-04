@@ -55,19 +55,31 @@
 <script type="text/javascript" src="{% static 'admins/moment.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'admins/bootstrap-material-datetimepicker.js' %}"></script>
 <script type="text/javascript">
+	function rerender(row) {
+		// console.log(row);
+		// var x = $(row);
+		// var y = x['0'].getElementsByTagName('select');
+		// console.log(y.material_select())
+		// x.getElementsByTagName('')
+		$('select').material_select();
+	}
 	$('.date-format').bootstrapMaterialDatePicker({ format : 'MM/DD/YYYY HH:MM', minDate : new Date() });
 	$(document).ready(function() {
       	$('.qs1').formset({ 
       		addText : ' <br><p class="btn white-text green ">Add Question </p> <br></br>',
       		deleteText : '<p class="btn white-text red ">Remove Question</p> <br></br> ',
       		prefix: '{{ qsformset1.prefix }}',
-			formCssClass: 'dynamic-formset1'
+			formCssClass: 'dynamic-formset1',
+			added: rerender,
+			removed: rerender,
       	});
       	$('.qs2').formset({ 
       		addText : ' <br><p class="btn white-text green ">Add Question </p> <br></br>',
       		deleteText : '<p class="btn white-text red ">Remove Question</p> <br></br> ',
       		prefix: '{{ qsformset2.prefix }}',
-			formCssClass: 'dynamic-formset2'
+			formCssClass: 'dynamic-formset2',
+			added: rerender,
+			removed: rerender,
       	});
   	});
 </script>

@@ -21,6 +21,8 @@
       flex: 1 0 auto;
     }
   </style>
+  {% block includes %}
+  {% endblock %}
   
 </head>
 <body>
@@ -62,6 +64,8 @@
     $('select').material_select();
 });
 </script>
+{% block scripts %}
+{% endblock %}
 <script>
     function onLoad() {
       gapi.load('auth2', function() {
