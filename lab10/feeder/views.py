@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
 from .forms import *
+from http.cookies import CookieError
 from admins.forms import QuestionForm
 from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
@@ -14,27 +15,45 @@ from django.core import serializers
 from django.forms import formset_factory
 import urllib.request
 import json, logging
+import datetime
 # Create your views here.
 
 logger = logging.getLogger('django')
 
-
+@csrf_exempt
 def StudentLogin(request):
 	JSONSerializer = serializers.get_serializer("json")
 	# logger.info(request)
 	if request.method == "GET":
-		return render(request, "feeder/csrf.html")
+		response = HttpResponse(json.dumps(
+					{'username':request.user.username}
+				))
+		return render(request, 'feeder/csrf.html')
 	elif request.method == "POST" :
 		logger.info(str(request));
 		user = authenticate(username=request.POST['username'], password=request.POST['password'])
 		if user is not None:
 			if hasattr(user, 'student'):
 				login(request, user)
-				usr = model_to_dict(user)
-				return render(request,'feeder/csrf.html',{'user' : usr})
+				response = HttpResponse('No id cookie! Sending cookie to client')
+				response.set_cookie('sessionid', request.COOKIES.get('sessionid'), secure=True, expires = timezone.now() + datetime.timedelta(days=365))
+				return response
+				# # for i in request.COOKIES :
+				# 	return HttpResponse(i,request.COOKIES[i])
+				# return HttpResponse(request.COOKIES['sessionid'])
 			return HttpResponse("You are not allowed here")
 		return HttpResponse("Wrong username or password")
 
+@login_required
+def APIendpoint(request):
+	if request.method == "POST":
+		return HttpResponse()
+	elif request.method == "GET":
+		response = HttpResponse(json.dumps(
+					{'username':request.user.username}
+				))
+		response.set_cookie('sessionid', request.COOKIES.get('sessionid'), secure=True, expires = timezone.now() + datetime.timedelta(days=365))
+		return response
 
 def LoginView(request):
 	if request.method == "POST":
