@@ -100,8 +100,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String cookie = cookieData.getString("cookie",null);
 //        CookieManager cookieManager = CookieManager.getInstance();
 //        Log.d("expiry",cookieManager.getCookie(Constants.DOMAIN));
+
         if (cookie != null) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
             finish();
         }
@@ -351,6 +352,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        editor = getSharedPreferences("cookie.dat",MODE_PRIVATE).edit();
+//        CookieManager cookieManager = CookieManager.getInstance();
+//        String cookie =  cookieManager.getCookie(Constants.DOMAIN);
+//        editor.putString("cookie", cookie);
+//        editor.commit();
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
 
@@ -434,8 +445,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 try {
                     Log.d("cookie", con2.getHeaderField("Set-Cookie"));
                     cookieManager.setCookie(Constants.DOMAIN, con2.getHeaderField("Set-Cookie"));
-                    editor.putString("cookie",con2.getHeaderField("Set-Cookie").toString());
-                    editor.commit();
+
                 }
                 catch (NullPointerException e) {
                     return false;
@@ -460,7 +470,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                Intent intent = new Intent(context,MainActivity.class);
+                Intent intent = new Intent(context, HomeActivity.class);
                 startActivity(intent);
                 finish();
             }
