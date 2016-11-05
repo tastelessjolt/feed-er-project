@@ -1,0 +1,59 @@
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ 
+ 
+%Information to be included in the title page:
+\title{Feeder27}
+\author{AUDACITY}
+\institute{IIT Bombay}
+\date{2016}
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+\begin{frame}
+\frametitle{What is Feeder?}
+\begin{itemize}
+    \item Feeder27 is a platform which simplifies the task of getting feed-backs and cater to the academic deadlines notification needs of students.
+    \item It consist of two modules one being webserver side based on Django framework (for admins and instructor)  and the other module is the android app (for students)
+\end{itemize}
+\end{frame}
+ 
+\begin{frame}
+\frametitle{Django}
+\begin{itemize}
+    \item Django is a python based framework for web development.
+    \item We have used Django for our webserver side coding.
+    \item It basically consist of maintaining database of courses, students, instructors and renedering html/css pages.
+    \item the main files are views.py, model.py, urls.py, apps.py etc.
+    \item model.py === databasing (with Sqlite3)
+    \item views.py === rendering webpages
+    \item urls.py === linking webpages
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Android}
+\begin{itemize}
+    \item Android app allows for student login and presents a calender after the login.
+    \item Once logged in the app fetches the data as JSONarrray from the database and sets up the calendar (highlighting the dates which have deadlines)
+    \item When user clicks the date, he shall be presented with the cards showing all the deadlines/event of that date of various subjects.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Why Feeder27? and not  any  other FeederXY}
+\begin{itemize}
+    \item makes life easier for instructor by providing the ability to create custom feedback forms at any point of time. The app will float the notification to all the student, instructor need not worry.
+    \item Beautiful and interactive website interface for both instructor and administrator.
+    \item It's easy for administrator to add/remove students/instructor/courses.
+    \item Simple yet elegant android app at student end which provides notifications timely.
+\end{itemize}
+\end{frame}
+ 
+\end{document}
+

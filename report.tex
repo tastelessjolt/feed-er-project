@@ -1,0 +1,117 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[margin=1cm]{geometry}
+\title{FEEDER27}
+\author{AUDACITY}
+\date{November 2016}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Feeder27 is an academic project built to cater the needs of admins,Instructor and students in an institution to keep track of the feedbacks, assignments and deadlines of various assignments and projects of various courses.
+The interface for instructor and admin is an iteractive website. Whereas the interface for the students is an android app.
+
+\section{Development steps}
+We started off by working on the Django part of the project which included building of website with database starting from scratch. This included formalising and defining schema for database, designing html pages and interlinking them, providing interface for the user to input the data which will be stored in database.\\
+Another crucial step was to make the site capabale of handling POST/GET request and to be able to send data from the database to the android app.\\
+Alot of effort has been made to improve the aesthetics of the website as well.\\
+The next step was to start developing the android application which will serve as the student side interface.\\
+Starting of with the designing of the layout for simple login page we used native HTTPClient in android in order to make app send and receive data from the webserver we designed in the first part. When student enters the login credential it is check at the server end if the credential are present in database or not and the access is provided.\\
+Once achieved that we included \emph{CALDROID} external library project in our own to be able to make customizable calender.\\
+Another important task was to be able to send and receive JSONobjects/JSONarray and then parse the json objects to extract the relevant data and present it in readable form and use it to make UI elements.
+
+
+
+\section{User Manual}
+\subsection{Admin}
+The website is hosted at 10.0.2.2:8027, the admin can login the website. Once logged in the portal admin can see many cards such as students, instructors, students. Admin can navigate into any one of these for different courses etc.\\
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.9\textwidth]{images/admin1.png}
+\caption{Fig 1 \label{overflow}}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.9\textwidth]{images/admin2.png}
+\caption{Fig 2 \label{overflow}}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.9\textwidth ]{images/admin3.png}
+\caption{Fig 3 \label{overflow}}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.9\textwidth ]{images/admin4.png}
+\caption{Fig 4 \label{overflow}}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.9\textwidth ]{images/admin5.png}
+\caption{Fig 5 \label{overflow}}
+\end{figure}
+
+\subsection{Instructor}
+The website is hosted at 10.0.2.2:8027, instructor can login/register by visiting the website.
+Once an instructor is registered at the website, he/she will be added for courses by the admin.
+Instructor can create the feedback form for the course he is registered with.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.9\textwidth]{images/instructor1.png}
+\caption{Fig 6 \label{overflow}}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{images/instructor2.png}
+\caption{Fig 6 \label{overflow}}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{images/instructor3.png}
+\caption{Fig 6 \label{overflow}}
+\end{figure}
+
+\subsection{Students}
+The student side interface is an android app by the name of feeder27. when launched it asks for student to enter username and password. Once logged in the student can see a calendar with the current month open and the dates with the deadline or assignment dues will be highlighted.
+Once the student click the highlighted dates the student will be able to see all the events for the day.
+If the student clicks on event which is feedback then the feedback form is loaded else description of the assignment is shown.
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{images/android1.jpg}
+\caption{Fig 7 \label{overflow}}
+\end{figure}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{images/android2.jpg}
+\caption{Fig 8 \label{overflow}}
+\end{figure}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{images/android3.jpg}
+\caption{Fig 9 \label{overflow}}
+\end{figure}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{images/android4.jpg}
+\caption{Fig 10 \label{overflow}}
+\end{figure}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{images/android5.png}
+\caption{Fig 11 \label{overflow}}
+\end{figure}
+
+
+
+\end{document}
