@@ -25,6 +25,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
 
@@ -84,8 +85,22 @@ public class HomeActivity extends AppCompatActivity
                 new RecyclerItemClickListener(this, recList ,new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getApplicationContext(), FeedbackForm.class);
-                startActivity(intent);
+                SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+                String date = ((TextView)view.findViewById(R.id.date)).getText().toString();
+                try {
+//                    int uid = Integer.parseInt(((TextView)view.findViewById(R.id.uid)).getText().toString());
+                    Date dateObj = df.parse(date);
+                    List<Deadline> temp =  deadlineMap.get(dateObj);
+                    Deadline d = temp.get(position);
+                    Gson gson = new Gson();
+
+                    Intent intent = new Intent(getApplicationContext(), AssignmentActivity.class);
+                    intent.putExtra(Constants.DEADLINE,gson.toJson(d));
+
+                    startActivity(intent);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -198,9 +213,11 @@ public class HomeActivity extends AppCompatActivity
 
         @Override
         public void onBindViewHolder(DeadlineViewHolder deadlineViewHolder, int i) {
+            SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
             Deadline ci = deadlineList.get(i);
             deadlineViewHolder.cardTitle.setText(ci.deadlineName);
             deadlineViewHolder.courseName.setText(ci.courseName);
+            deadlineViewHolder.date.setText(df.format(ci.deadline));
             if(ci.isFeedback) {
                 deadlineViewHolder.deadlineName.setText("Feedback");
             }
@@ -222,9 +239,11 @@ public class HomeActivity extends AppCompatActivity
             protected TextView deadlineName;
             protected TextView courseName;
             protected TextView cardTitle;
+            protected TextView date;
 
             public DeadlineViewHolder(View v) {
                 super(v);
+                date = (TextView) v.findViewById(R.id.date);
                 cardTitle = (TextView) v.findViewById(R.id.card_title);
                 deadlineName =  (TextView) v.findViewById(R.id.title);
                 courseName = (TextView)  v.findViewById(R.id.courseName);
@@ -255,7 +274,7 @@ public class HomeActivity extends AppCompatActivity
                         Date time = formattertime.parse(fields.optString("deadline"));
                         temp = deadlineMap.get(date);
                         tempDeadline = new Deadline();
-                        tempDeadline.id = jsonObject.optInt("pk");
+                        tempDeadline.uid = jsonObject.optInt("pk");
                         tempDeadline.courseName = courses.get(fields.getInt("course")).courseName;
                         tempDeadline.deadlineName = fields.optString("fb_name");
                         tempDeadline.isFeedback = true;
@@ -318,7 +337,7 @@ public class HomeActivity extends AppCompatActivity
                         Date time = formattertime.parse(fields.optString("deadline"));
                         temp = deadlineMap.get(date);
                         tempDeadline = new Deadline();
-                        tempDeadline.id = jsonObject.optInt("pk");
+                        tempDeadline.uid = jsonObject.optInt("pk");
                         tempDeadline.courseName = courses.get(fields.getInt("course")).courseName;
                         tempDeadline.deadlineName = fields.optString("assignment_name");
                         tempDeadline.description = fields.optString("description");

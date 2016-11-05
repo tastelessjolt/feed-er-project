@@ -11,7 +11,7 @@ public class Deadline {
     protected String courseName;
     protected Date deadline;
     protected Date pubDate;
-    protected int id;
+    protected int uid;
     protected boolean isFeedback;
     protected String description;
     protected static final String NAME_PREFIX = "Deadline_:";

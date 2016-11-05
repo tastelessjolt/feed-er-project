@@ -36,7 +36,9 @@
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme" />
-        <activity android:name=".FeedbackForm"></activity>
+        <activity android:name=".FeedbackForm" />
+        <activity android:name=".AssignmentActivity"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"></activity>
     </application>
 
 </manifest>
