@@ -43,11 +43,12 @@ public class GetData extends AsyncTask<Void, Void, Boolean> {
     private SharedPreferences.Editor editor;
     public JSONArray jsonData;
     OnTaskFinishedListener mListener;
-
+    String message = null;
     HomeActivity context;
 
-    GetData(final HomeActivity context) {
+    GetData(String message,final HomeActivity context) {
         this.context = context;
+        this.message = message;
     }
 
     @Override
@@ -60,8 +61,12 @@ public class GetData extends AsyncTask<Void, Void, Boolean> {
             String cookie = cookieData.getString("cookie",null);
             Log.d("my cookie", cookie);
 
-            con.setRequestMethod("GET");
+            con.setRequestMethod("POST");
             con.setRequestProperty("Cookie", cookie);
+            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+            wr.writeBytes(message);
+            wr.flush();
+            wr.close();
 //            Gson gson = new Gson();
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
@@ -86,7 +91,7 @@ public class GetData extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected void onPostExecute(final Boolean success) {
-        context.onBackgroundTaskCompleted(jsonData);
+        context.onBackgroundTaskCompleted(message,jsonData);
 //        context.jsonData = jsonData;
 //        HashMap<Date, Drawable> feedbacks = new HashMap<>();
 //        for(int i=0; i < jsonData.length(); i++){
