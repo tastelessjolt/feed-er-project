@@ -22,12 +22,8 @@ logger = logging.getLogger('django')
 
 @csrf_exempt
 def StudentLogin(request):
-	JSONSerializer = serializers.get_serializer("json")
 	# logger.info(request)
 	if request.method == "GET":
-		response = HttpResponse(json.dumps(
-					{'username':request.user.username}
-				))
 		return render(request, 'feeder/csrf.html')
 	elif request.method == "POST" :
 		logger.info(str(request));
@@ -38,22 +34,31 @@ def StudentLogin(request):
 				response = HttpResponse('No id cookie! Sending cookie to client')
 				response.set_cookie('sessionid', request.COOKIES.get('sessionid'), secure=True, expires = timezone.now() + datetime.timedelta(days=365))
 				return response
-				# # for i in request.COOKIES :
-				# 	return HttpResponse(i,request.COOKIES[i])
-				# return HttpResponse(request.COOKIES['sessionid'])
 			return HttpResponse("You are not allowed here")
 		return HttpResponse("Wrong username or password")
 
 @login_required
 def APIendpoint(request):
+	JSONSerializer = serializers.get_serializer("json")
 	if request.method == "POST":
 		return HttpResponse()
 	elif request.method == "GET":
-		response = HttpResponse(json.dumps(
-					{'username':request.user.username}
-				))
+		fq = Feedback.objects.none();
+		for c in request.user.student.course.all():
+			fq = fq | c.feedback_set.all()
+
+		data = serializers.serialize("json", fq)
+		response = HttpResponse(data)
 		response.set_cookie('sessionid', request.COOKIES.get('sessionid'), secure=True, expires = timezone.now() + datetime.timedelta(days=365))
 		return response
+
+def TestAPI(request):
+	# JSONSerializer = serializers.get_serializer("json")
+	fq = Feedback.objects.none();
+	for c in Course.objects.all():
+		fq = fq | c.feedback_set.all()
+	data = serializers.serialize("json", Feedback.objects.all())
+	return HttpResponse(data)
 
 def LoginView(request):
 	if request.method == "POST":

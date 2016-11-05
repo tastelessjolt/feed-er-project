@@ -18,5 +18,6 @@ urlpatterns = [
 	url(r'^adddeadline/$', views.AddAssignment, name='adddeadline'),
 	url(r'^assignments/$', views.AllAssignments, name='assignments'),
 	url(r'^assignments/(?P<pk>[0-9]+)/$', views.AssignmentView, name='assignment'),
-	url(r'^apiendpoint/$', views.APIendpoint, name = 'apiendpoint')
+	url(r'^apiendpoint/$', views.APIendpoint, name = 'apiendpoint'),
+	url(r'^testapi/$', views.TestAPI, name = 'testapi'),
 ]
