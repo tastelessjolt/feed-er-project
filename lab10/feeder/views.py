@@ -62,6 +62,8 @@ def APIendpoint(request):
 				for f in c.feedback_set.all() :
 					qq = qq | f.question_set.all()
 			response = HttpResponse(serializers.serialize("json", qq), content_type='application/json')
+		elif request.POST.get('q') == 'answer' :
+			response = HttpResponse()
 		response.set_cookie('sessionid', request.COOKIES.get('sessionid'), secure=True, expires = timezone.now() + datetime.timedelta(days=365))
 		return response
 	elif request.method == "GET":
@@ -76,14 +78,16 @@ def APIendpoint(request):
 
 def TestAPI(request):
 	# JSONSerializer = serializers.get_serializer("json")
-	aq = Assignment.objects.none()
+	qq = Question.objects.none()
 	for c in Course.objects.all():
-		aq = aq | c.assignment_set.all()
-	response = HttpResponse(serializers.serialize("json", aq), content_type='application/json')
+		for f in c.feedback_set.all() :
+			qq = qq | f.question_set.all()
+	response = HttpResponse(serializers.serialize("json", qq), content_type='application/json')
 	return response
 
 def LoginView(request):
 	if request.method == "POST":
+		error_message='Wrong email or password'
 		form = LoginForm(request.POST)
 		# if form.is_valid():
 		if request.POST.get('token'):
@@ -94,16 +98,14 @@ def LoginView(request):
 			if hasattr(user, 'instructor'):
 				login(request, user)
 				welcome = "Welcome, " + user.get_full_name()
-				return render(request, "feeder/index.html", {
-					'error_message' : welcome,
-				})
-			else :
 				return HttpResponseRedirect(reverse('feeder:login'))
+			else :
+				error_message='You are not allowed here'
 		else :
 			form = LoginForm(request.POST)
 			return render(request, "feeder/login.html", {
 				'form' : form,
-				'error_message' : "Wrong email or password",
+				'error_message' : error_message,
 			})
 				
 	else :

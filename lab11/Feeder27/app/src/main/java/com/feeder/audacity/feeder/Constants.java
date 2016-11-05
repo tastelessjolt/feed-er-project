@@ -15,6 +15,7 @@ public class Constants {
     public static String DATE = "date";
     public static String ID = "id";
     public static String DEADLINE = "deadline";
+    public static String QUESTION = "question";
     public static int LOGINOK = 0;
     public static int NETWORKERR = 1;
     public static int PASSWORDINCORRECT = 2;

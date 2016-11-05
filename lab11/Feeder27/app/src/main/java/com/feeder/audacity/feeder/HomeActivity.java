@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.IntegerRes;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -53,6 +54,8 @@ public class HomeActivity extends AppCompatActivity
     HashMap<Integer, Course> courses = null;
     List<Deadline> dynamicList = null;
     DeadlineAdapter ca = null;
+    List<Deadline> allFeedbacks = null;
+    boolean questionSync = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,10 +97,18 @@ public class HomeActivity extends AppCompatActivity
                     Deadline d = temp.get(position);
                     Gson gson = new Gson();
 
-                    Intent intent = new Intent(getApplicationContext(), AssignmentActivity.class);
-                    intent.putExtra(Constants.DEADLINE,gson.toJson(d));
+                    if(!d.isFeedback) {
+                        Intent intent = new Intent(getApplicationContext(), AssignmentActivity.class);
+                        intent.putExtra(Constants.DEADLINE, gson.toJson(d));
+                        startActivity(intent);
+                    }
+                    else {
+                        Intent intent = new Intent(getApplicationContext(), FeedbackForm.class);
+                        intent.putExtra(Constants.DEADLINE, gson.toJson(d));
+//                        intent.putExtra(Constants.QUESTION, gson.toJson(d.questions));
+                        startActivity(intent);
+                    }
 
-                    startActivity(intent);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -196,7 +207,11 @@ public class HomeActivity extends AppCompatActivity
         return result;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
+    }
 
     public class DeadlineAdapter extends RecyclerView.Adapter<DeadlineAdapter.DeadlineViewHolder> {
 
@@ -225,6 +240,8 @@ public class HomeActivity extends AppCompatActivity
                 deadlineViewHolder.deadlineName.setText("Assignment");
             }
         }
+
+
 
         @Override
         public DeadlineViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -260,6 +277,7 @@ public class HomeActivity extends AppCompatActivity
                 this.jsonData = jsonData;
                 HashMap<Date, Drawable> feedbacks = new HashMap<>();
                 List<Deadline> temp = null;
+                allFeedbacks = new ArrayList<>();
                 Deadline tempDeadline = null;
                 if(deadlineMap == null) {
                     deadlineMap = new HashMap<>();
@@ -279,6 +297,7 @@ public class HomeActivity extends AppCompatActivity
                         tempDeadline.deadlineName = fields.optString("fb_name");
                         tempDeadline.isFeedback = true;
                         tempDeadline.deadline = time;
+                        allFeedbacks.add(tempDeadline);
                         if (temp == null) {
                             temp = new ArrayList<>();
                             deadlineMap.put(date, temp);
@@ -358,8 +377,34 @@ public class HomeActivity extends AppCompatActivity
                     }
                 }
             }
-            else if (message.equals(Constants.GET_QUESTIONS)) {
-                
+            else if (message.equals(Constants.GET_QUESTIONS) && !questionSync ) {
+
+                for (int i = 0; i != jsonData.length(); i++ ){
+                    JSONObject obj = null;
+                    try {
+                        obj = jsonData.getJSONObject(i);
+                        JSONObject fields = obj.getJSONObject("fields");
+                        int pk = fields.getInt("feedback");
+                        Question q = new Question();
+                        q.fbId = pk;
+                        q.pk = obj.getInt("pk");
+                        q.questionText = fields.getString("question_text");
+                        q.questionType = fields.getString("question_type");
+                        for (Deadline d : allFeedbacks ) {
+                            if(d.uid == pk) {
+                                if (d.questions == null) {
+                                    d.questions = new ArrayList<>();
+                                }
+                                d.questions.add(q);
+                                break;
+                            }
+                        }
+                        questionSync = true;
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
