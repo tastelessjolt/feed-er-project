@@ -99,14 +99,13 @@ public class FeedbackForm extends AppCompatActivity {
 
     }
 
-    public void onBackgroundTaskCompleted(String msg, boolean success, JSONArray jsonArray){
-        if(success && msg != null) {
+    public void onBackgroundTaskCompleted(String msg, JSONArray jsonArray){
+        if(msg != null) {
             if(msg.equals("success")){
                 TextView textView = (TextView) findViewById(R.id.status);
                 textView.setText("Done");
                 Toast.makeText(this,"Response recorded",Toast.LENGTH_LONG).show();
-                System.out.println("Yp!");
-
+                finish();
             }
         }
         else {

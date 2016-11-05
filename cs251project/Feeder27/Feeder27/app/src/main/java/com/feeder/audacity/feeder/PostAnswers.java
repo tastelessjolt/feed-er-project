@@ -64,13 +64,13 @@ public class PostAnswers extends AsyncTask<Void, Void, Boolean> {
                 response.append(inputLine);
             }
             in.close();
+            msg = String.valueOf(response);
             Log.d("Json", String.valueOf(response));
             Log.d("Response cookie", con.getHeaderField("set-cookie"));
             editor = cookieData.edit();
             editor.putString("cookie",con.getHeaderField("set-cookie") );
             editor.commit();
             jsonData = new JSONArray(response.toString());
-            msg = response.toString();
             return true;
         } catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -80,7 +80,7 @@ public class PostAnswers extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected void onPostExecute(final Boolean success) {
-        context.onBackgroundTaskCompleted(msg,success,jsonData);
+        context.onBackgroundTaskCompleted(msg,jsonData);
 //        context.jsonData = jsonData;
 //        HashMap<Date, Drawable> feedbacks = new HashMap<>();
 //        for(int i=0; i < jsonData.length(); i++){

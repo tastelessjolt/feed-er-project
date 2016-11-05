@@ -141,8 +141,7 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onSelectDate(Date date, View view) {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-                Toast.makeText(getApplicationContext(), formatter.format(date),
-                        Toast.LENGTH_SHORT).show();
+
 
                 if(deadlinesync) {
                     List<Deadline> temp = deadlineMap.get(date);
@@ -157,28 +156,33 @@ public class HomeActivity extends AppCompatActivity
     //                    DeadlineAdapter ca = new DeadlineAdapter(createList(30));
     //                    recList.swapAdapter(ca,true);
                     }
+                    else {
+                        dynamicList.clear();
+                        ca.notifyDataSetChanged();
+                    }
                 }
+
             }
             @Override
             public void onChangeMonth(int month, int year) {
                 String text = "month: " + month + " year: " + year;
-                Toast.makeText(getApplicationContext(), text,
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), text,
+//                        Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onLongClickDate(Date date, View view) {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-                Toast.makeText(getApplicationContext(),
-                        "Long click " + formatter.format(date),
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(),
+//                        "Long click " + formatter.format(date),
+//                        Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onCaldroidViewCreated() {
-                Toast.makeText(getApplicationContext(),
-                        "Caldroid view is created",
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(),
+//                        "Caldroid view is created",
+//                        Toast.LENGTH_SHORT).show();
             }
 
         };
