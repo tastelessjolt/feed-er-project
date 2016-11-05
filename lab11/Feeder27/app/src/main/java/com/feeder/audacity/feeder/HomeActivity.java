@@ -75,9 +75,23 @@ public class HomeActivity extends AppCompatActivity
         // Get data
         GetData sync = new GetData(Constants.GET_COURSES,this);
         sync.execute();
+        //
 
         //List Addapter
         recList = (RecyclerView) findViewById(R.id.deadline_list);
+        recList.addOnItemTouchListener(
+                new RecyclerItemClickListener(this, recList ,new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(getApplicationContext(), FeedbackForm.class);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+                // do whatever
+            }
+        }));
         recList.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
