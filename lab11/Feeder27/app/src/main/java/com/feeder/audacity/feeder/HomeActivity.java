@@ -44,10 +44,10 @@ public class HomeActivity extends AppCompatActivity
     HashMap<Date, List<Deadline> > deadlineMap;
     List<Deadline> deadlines = null;
     boolean deadlinesync = false;
+    boolean coursesync = false;
     RecyclerView recList = null;
-    ListView listView = null;
+    HashMap<Integer, Course> courses = null;
     List<Deadline> dynamicList = null;
-    ArrayAdapter<String> itemsAdapter = null;
     DeadlineAdapter ca = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +60,7 @@ public class HomeActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -246,7 +247,27 @@ public class HomeActivity extends AppCompatActivity
                 }
                 System.out.println(deadlineMap);
             } else if (message.equals(Constants.GET_COURSES)) {
-                System.out.println(jsonData);
+                coursesync = true;
+                courses = new HashMap<>();
+                for(int i = 0; i != jsonData.length(); i++){
+                    try {
+                        JSONObject obj = jsonData.getJSONObject(i);
+                        JSONObject fields = obj.getJSONObject("fields");
+                        Course course = new Course();
+                        course.courseCode = fields.optString("course_code");
+                        course.courseName = fields.optString("course_name");
+                        course.courseId = obj.getInt("pk");
+                        courses.put(obj.getInt("pk"),course);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println(courses);
+                GetData getData = new GetData(Constants.GET_FEEDBACKS,this);
+                getData.execute();
+
+                GetData getData1 = new GetData(Constants.GET_ASSIGNMENTS,this);
+                getData1.execute();
             }
         }
     }
@@ -289,6 +310,8 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        System.out.println("Working!!");
+
         if (id == R.id.nav_home) {
             // Handle the camera action
         } else if (id == R.id.nav_courses) {
@@ -302,7 +325,8 @@ public class HomeActivity extends AppCompatActivity
             SharedPreferences.Editor editor = cookiedata.edit();
             editor.clear();
             editor.commit();
-            finish();   
+            System.out.println("Working!!");
+            finish();
         }
 
 
