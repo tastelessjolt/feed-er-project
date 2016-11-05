@@ -17,6 +17,9 @@ import android.view.MenuItem;
 import com.google.gson.Gson;
 import com.roomorama.caldroid.CaldroidFragment;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,6 +29,9 @@ import java.net.URL;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    public JSONArray jsonData;
+    public CaldroidFragment caldroidFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,24 +40,23 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-        this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
 
-
     // ############ Caldroid ################
-//        CaldroidFragment caldroidFragment = new CaldroidFragment();
-//        android.support.v4.app.FragmentTransaction t = getSupportFragmentManager().beginTransaction();
-//        t.replace(R.id.calendar, caldroidFragment);
-//        t.commit();
-//        // Get data
-//        GetData sync = new GetData(this);
-//        sync.execute();
+        caldroidFragment = new CaldroidFragment();
+        android.support.v4.app.FragmentTransaction t = getSupportFragmentManager().beginTransaction();
+        t.replace(R.id.calendar, caldroidFragment);
+        t.commit();
+        // Get data
+        GetData sync = new GetData(this);
+        sync.execute();
+
     }
 
     @Override
