@@ -13,9 +13,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.roomorama.caldroid.CaldroidFragment;
+import com.roomorama.caldroid.CaldroidListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,6 +28,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -56,6 +61,41 @@ public class HomeActivity extends AppCompatActivity
         // Get data
         GetData sync = new GetData(this);
         sync.execute();
+
+        final CaldroidListener listener = new CaldroidListener() {
+
+            @Override
+            public void onSelectDate(Date date, View view) {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+                Toast.makeText(getApplicationContext(), formatter.format(date),
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onChangeMonth(int month, int year) {
+                String text = "month: " + month + " year: " + year;
+                Toast.makeText(getApplicationContext(), text,
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onLongClickDate(Date date, View view) {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+                Toast.makeText(getApplicationContext(),
+                        "Long click " + formatter.format(date),
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCaldroidViewCreated() {
+                Toast.makeText(getApplicationContext(),
+                        "Caldroid view is created",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+        };
+
+        caldroidFragment.setCaldroidListener(listener);
 
     }
 
