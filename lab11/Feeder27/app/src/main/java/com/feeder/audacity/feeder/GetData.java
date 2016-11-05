@@ -42,6 +42,8 @@ public class GetData extends AsyncTask<Void, Void, Boolean> {
     private SharedPreferences cookieData;
     private SharedPreferences.Editor editor;
     public JSONArray jsonData;
+    OnTaskFinishedListener mListener;
+
     HomeActivity context;
 
     GetData(final HomeActivity context) {
@@ -84,23 +86,35 @@ public class GetData extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected void onPostExecute(final Boolean success) {
-        context.jsonData = jsonData;
-        HashMap<Date, Drawable> feedbacks = new HashMap<>();
-        for(int i=0; i < jsonData.length(); i++){
-            try {
-                JSONObject jsonObject = jsonData.getJSONObject(i);
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                Date date = formatter.parse(jsonObject.getJSONObject("fields").optString("deadline") );
-                feedbacks.put(date, new ColorDrawable(jsonObject.getJSONObject("fields").optInt("course")));
-                context.caldroidFragment.setBackgroundDrawableForDates(feedbacks);
-            } catch (JSONException | ParseException e) {
-                e.printStackTrace();
-            }
-        }
+        context.onBackgroundTaskCompleted(jsonData);
+//        context.jsonData = jsonData;
+//        HashMap<Date, Drawable> feedbacks = new HashMap<>();
+//        for(int i=0; i < jsonData.length(); i++){
+//            try {
+//                JSONObject jsonObject = jsonData.getJSONObject(i);
+//                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+//                Date date = formatter.parse(jsonObject.getJSONObject("fields").optString("deadline") );
+//                feedbacks.put(date, new ColorDrawable(jsonObject.getJSONObject("fields").optInt("course")));
+//                context.caldroidFragment.setBackgroundDrawableForDates(feedbacks);
+//            } catch (JSONException | ParseException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
 
 
     }
+
+
+    public interface OnTaskFinishedListener {
+        public void onFinished();
+    }
+
+    public void setOnTaskFinishedListener(OnTaskFinishedListener listener) {
+        mListener = listener;
+    }
+
+
 
     @Override
     protected void onCancelled() {
