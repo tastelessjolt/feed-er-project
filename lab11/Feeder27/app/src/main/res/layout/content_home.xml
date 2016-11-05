@@ -26,10 +26,7 @@
         android:layout_below="@+id/calendar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="YO"/>
+
         <!--<ListView-->
             <!--android:id="@+id/list_view"-->
             <!--android:layout_width="match_parent"-->
