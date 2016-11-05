@@ -1,6 +1,7 @@
 package com.feeder.audacity.feeder;
 
 import android.content.Intent;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.FitWindowsViewGroup;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -65,7 +67,9 @@ public class FeedbackForm extends AppCompatActivity {
             RatingBar[] ratingBars;
             EditText[] editTexts;
             FeedbackForm context;
-            public void ClickListener(EditText[] editTexts, RatingBar[] ratingBars, FeedbackForm context){
+
+
+            public ClickListener(EditText[] editTexts, RatingBar[] ratingBars, FeedbackForm context){
                 this.ratingBars = ratingBars;
                 this.editTexts = editTexts;
                 this.context = context;
@@ -77,30 +81,36 @@ public class FeedbackForm extends AppCompatActivity {
                 int countText = 0;
                 for(Question q : deadline.questions) {
                     if (q.questionType.equals("text")) {
-                        postData += "&" + "q" + q.pk + editTexts[countText].getText().toString();
+                        postData = postData + "&" + "q" + q.pk + "=" + editTexts[countText].getText().toString();
                         countText++;
                     } else if (q.questionType.equals("rate")) {
-                        postData += "&" + "q" + q.pk + ratingBars[countRate].getRating();
+                        postData = postData + "&" + "q" + q.pk + "=" + (int)
+                                ratingBars[countRate].getRating();
                         countRate++;
                     }
                 }
+                System.out.println(postData);
                 PostAnswers getData = new PostAnswers("answer" + postData, context);
+                getData.execute();
             }
         }
-        ClickListener listener = new ClickListener();
+        ClickListener listener = new ClickListener(editTexts, ratingBars, this);
         button.setOnClickListener(listener);
 
     }
 
     public void onBackgroundTaskCompleted(String msg, boolean success, JSONArray jsonArray){
-        if(success) {
+        if(success && msg != null) {
             if(msg.equals("success")){
-                TextView textView = new TextView(this);
+                TextView textView = (TextView) findViewById(R.id.status);
                 textView.setText("Done");
+                Toast.makeText(this,"Response recorded",Toast.LENGTH_LONG).show();
+                System.out.println("Yp!");
+
             }
         }
         else {
-
+            System.out.println("Yp!");
         }
     }
 }

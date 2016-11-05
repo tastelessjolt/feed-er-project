@@ -24,17 +24,17 @@ logger = logging.getLogger('django')
 def StudentLogin(request):
 	# logger.info(request)
 	if request.method == "GET":
-		return render(request, 'feeder/csrf.html')
+		return HttpResponse("Get Request!")
 	elif request.method == "POST" :
 		logger.info(str(request));
 		user = authenticate(username=request.POST['username'], password=request.POST['password'])
 		if user is not None:
 			if hasattr(user, 'student'):
 				login(request, user)
-				resp = render(request, 'feeder/csrf.html', {'user' : user})
+				# resp = render(request, 'feeder/csrf.html', {'user' : user})
 				# response = HttpResponse(resp.get_cookie('sessionid'))
 				# response.set_cookie('sessionid', request.COOKIES.get('sessionid'), secure=True, expires = timezone.now() + datetime.timedelta(days=365))
-				return resp
+				return HttpResponse("success")
 			return HttpResponse("You are not allowed here")
 		return HttpResponse("Wrong username or password")
 
@@ -64,7 +64,42 @@ def APIendpoint(request):
 					qq = qq | f.question_set.all()
 			response = HttpResponse(serializers.serialize("json", qq), content_type='application/json')
 		elif request.POST.get('q') == 'answer':
-			response = HttpResponse()
+			logger.info("Yeah!")
+			for i in request.POST :
+				logger.info(request.POST[i])
+				if i != 'q':
+					pk = int(i[1:])
+					question = get_object_or_404(Question, pk = pk)
+					if question.question_type == 'text':
+						answer = Answer()
+						answer.answer = request.POST[i]
+						answer.question_id = question.id
+						answer.save() 
+					elif question.question_type == 'rate':
+						if not hasattr(question,'ratinganswer') :
+							answer = RatingAnswer()
+							answer.responses1 = 0;
+							answer.responses2 = 0;
+							answer.responses3 = 0;
+							answer.responses4 = 0;
+							answer.responses5 = 0;
+							answer.question_id = question.id
+							answer.save()
+						question = get_object_or_404(Question, pk = pk)
+						if request.POST[i] == '1':
+							question.ratinganswer.responses1 += 1;
+						elif request.POST[i] == '2':
+							question.ratinganswer.responses2 += 1;
+						elif request.POST[i] == '3':
+							question.ratinganswer.responses3 += 1;
+						elif request.POST[i] == '4':
+							question.ratinganswer.responses4 += 1;
+						elif request.POST[i] == '5':
+							question.ratinganswer.responses5 += 1;
+						question.ratinganswer.save()
+						
+
+			response = HttpResponse("success")
 		response.set_cookie('sessionid', request.COOKIES.get('sessionid'), secure=True, expires = timezone.now() + datetime.timedelta(days=365))
 		return response
 	elif request.method == "GET":
