@@ -1,11 +1,13 @@
 package com.feeder.audacity.feeder;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -295,9 +297,18 @@ public class HomeActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        System.out.println("log");
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            System.out.println("logout");
+            SharedPreferences cookiedata = this.getSharedPreferences("cookie.dat",MODE_PRIVATE);
+            SharedPreferences.Editor editor = cookiedata.edit();
+            editor.clear();
+            editor.commit();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
             return true;
         }
 
@@ -309,6 +320,7 @@ public class HomeActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        Log.d("feeder", "id"+Integer.toString(id));
 
         System.out.println("Working!!");
 
