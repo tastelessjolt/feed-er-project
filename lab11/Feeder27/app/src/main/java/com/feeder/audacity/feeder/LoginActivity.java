@@ -96,15 +96,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         cookieData = getSharedPreferences("cookie.dat",MODE_PRIVATE);
-        editor = cookieData.edit();
-        String cookie = cookieData.getString("cookie",null);
 //        CookieManager cookieManager = CookieManager.getInstance();
 //        Log.d("expiry",cookieManager.getCookie(Constants.DOMAIN));
 
+        String cookie = cookieData.getString("cookie",null);
+
         if (cookie != null) {
+            Log.d("cookie",cookie);
             Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
             finish();
+        }
+        else {
+            Log.d("Cook","cookie not there");
         }
 
         setContentView(R.layout.activity_login);
@@ -352,16 +356,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-//        editor = getSharedPreferences("cookie.dat",MODE_PRIVATE).edit();
-//        CookieManager cookieManager = CookieManager.getInstance();
-//        String cookie =  cookieManager.getCookie(Constants.DOMAIN);
-//        editor.putString("cookie", cookie);
-//        editor.commit();
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
 
@@ -419,6 +413,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     csrf = con1.getHeaderField("Set-Cookie").split(";\\s*")[0];
                     cookieManager.setCookie(Constants.DOMAIN,con1.getHeaderField("Set-Cookie") ) ;
                 }
+                try {
+                    con1.disconnect();
+                }
+                catch (Exception e) {
+
+                }
+
 
                 URL obj2 = new URL(loginUrl);
                 HttpURLConnection con2 = (HttpURLConnection) obj2.openConnection();
@@ -443,12 +444,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Log.d("response code ", ""+responseCode);
                 Log.d("response", response.toString());
                 try {
-                    Log.d("cookie", con2.getHeaderField("Set-Cookie"));
-                    cookieManager.setCookie(Constants.DOMAIN, con2.getHeaderField("Set-Cookie"));
-
+                    editor = cookieData.edit();
+                    String id = con2.getHeaderField("Set-Cookie");
+                    Log.d("cookie", id);
+                    cookieManager.setCookie(Constants.DOMAIN,id);
+                    editor.putString("cookie", id);
+                    editor.commit();
+                    con2.disconnect();
                 }
                 catch (NullPointerException e) {
                     return false;
+                }
+                catch (Exception e){
+
                 }
                 
                 Thread.sleep(20);
@@ -470,7 +478,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                Intent intent = new Intent(context, HomeActivity.class);
+                Intent intent = new Intent(context,HomeActivity.class);
                 startActivity(intent);
                 finish();
             }
