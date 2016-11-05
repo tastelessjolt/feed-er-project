@@ -13,6 +13,8 @@ public class Deadline {
     protected Date deadline;
     protected Date pubDate;
     protected int uid;
+    protected int rateq = 0;
+    protected int textq = 0;
     public List<Question> questions = null;
     protected boolean isFeedback;
     protected String description;

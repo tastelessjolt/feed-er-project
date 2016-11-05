@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
 from django.core import serializers
 from django.forms import formset_factory
 import urllib.request
@@ -20,7 +20,7 @@ import datetime
 
 logger = logging.getLogger('django')
 
-@csrf_exempt
+@ensure_csrf_cookie
 def StudentLogin(request):
 	# logger.info(request)
 	if request.method == "GET":
@@ -31,9 +31,10 @@ def StudentLogin(request):
 		if user is not None:
 			if hasattr(user, 'student'):
 				login(request, user)
-				response = HttpResponse('No id cookie! Sending cookie to client')
-				response.set_cookie('sessionid', request.COOKIES.get('sessionid'), secure=True, expires = timezone.now() + datetime.timedelta(days=365))
-				return response
+				resp = render(request, 'feeder/csrf.html', {'user' : user})
+				# response = HttpResponse(resp.get_cookie('sessionid'))
+				# response.set_cookie('sessionid', request.COOKIES.get('sessionid'), secure=True, expires = timezone.now() + datetime.timedelta(days=365))
+				return resp
 			return HttpResponse("You are not allowed here")
 		return HttpResponse("Wrong username or password")
 
@@ -62,7 +63,7 @@ def APIendpoint(request):
 				for f in c.feedback_set.all() :
 					qq = qq | f.question_set.all()
 			response = HttpResponse(serializers.serialize("json", qq), content_type='application/json')
-		elif request.POST.get('q') == 'answer' :
+		elif request.POST.get('q') == 'answer':
 			response = HttpResponse()
 		response.set_cookie('sessionid', request.COOKIES.get('sessionid'), secure=True, expires = timezone.now() + datetime.timedelta(days=365))
 		return response

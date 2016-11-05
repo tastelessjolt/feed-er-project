@@ -56,6 +56,7 @@ public class HomeActivity extends AppCompatActivity
     DeadlineAdapter ca = null;
     List<Deadline> allFeedbacks = null;
     boolean questionSync = false;
+    HashMap<Date, Drawable> feedbacks = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -275,7 +276,7 @@ public class HomeActivity extends AppCompatActivity
         if(jsonData != null) {
             if (message.equals(Constants.GET_FEEDBACKS)) {
                 this.jsonData = jsonData;
-                HashMap<Date, Drawable> feedbacks = new HashMap<>();
+                feedbacks = new HashMap<>();
                 List<Deadline> temp = null;
                 allFeedbacks = new ArrayList<>();
                 Deadline tempDeadline = null;
@@ -303,9 +304,8 @@ public class HomeActivity extends AppCompatActivity
                             deadlineMap.put(date, temp);
                         }
                         temp.add(tempDeadline);
-                        feedbacks.put(date, new ColorDrawable(fields.optInt("course")));
-                        caldroidFragment.setBackgroundDrawableForDates(feedbacks);
-                        caldroidFragment.refreshView();
+                        feedbacks.put(date, new ColorDrawable(fields.optInt("course") + 1));
+
                         deadlinesync = true;
                         GetData getData = new GetData(Constants.GET_QUESTIONS, this);
                         getData.execute();
@@ -340,7 +340,9 @@ public class HomeActivity extends AppCompatActivity
             }
             else if (message.equals(Constants.GET_ASSIGNMENTS)) {
                 this.jsonData = jsonData;
-                HashMap<Date, Drawable> feedbacks = new HashMap<>();
+                if(feedbacks == null) {
+                    feedbacks = new HashMap<>();
+                }
                 List<Deadline> temp = null;
                 Deadline tempDeadline = null;
                 if(deadlineMap == null) {
@@ -367,14 +369,16 @@ public class HomeActivity extends AppCompatActivity
                             deadlineMap.put(date, temp);
                         }
                         temp.add(tempDeadline);
-                        feedbacks.put(date, new ColorDrawable(fields.optInt("course")));
-                        caldroidFragment.setBackgroundDrawableForDates(feedbacks);
-                        caldroidFragment.refreshView();
+                        feedbacks.put(date, new ColorDrawable(fields.optInt("course") + 1));
                         deadlinesync = true;
                     }
                     catch (JSONException | ParseException e) {
                         e.printStackTrace();
                     }
+                }
+                if(feedbacks != null) {
+                    caldroidFragment.setBackgroundDrawableForDates(feedbacks);
+                    caldroidFragment.refreshView();
                 }
             }
             else if (message.equals(Constants.GET_QUESTIONS) && !questionSync ) {
@@ -396,6 +400,12 @@ public class HomeActivity extends AppCompatActivity
                                     d.questions = new ArrayList<>();
                                 }
                                 d.questions.add(q);
+                                if(q.questionType.equals("text")){
+                                    d.textq ++;
+                                }
+                                else if(q.questionType.equals("rate")){
+                                    d.rateq ++;
+                                }
                                 break;
                             }
                         }

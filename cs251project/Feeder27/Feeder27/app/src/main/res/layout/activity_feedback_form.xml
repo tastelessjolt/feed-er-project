@@ -10,5 +10,9 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.feeder.audacity.feeder.FeedbackForm"
     android:orientation="vertical">
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
