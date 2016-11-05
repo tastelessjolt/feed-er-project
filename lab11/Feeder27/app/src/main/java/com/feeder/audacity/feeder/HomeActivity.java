@@ -1,5 +1,6 @@
 package com.feeder.audacity.feeder;
 
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -294,7 +295,14 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_feedbacks) {
 
+        } else if (id == R.id.nav_logout){
+            SharedPreferences cookiedata = this.getSharedPreferences("cookie.dat",MODE_PRIVATE);
+            SharedPreferences.Editor editor = cookiedata.edit();
+            editor.clear();
+            editor.commit();
+            finish();   
         }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
