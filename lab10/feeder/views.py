@@ -37,19 +37,21 @@ def StudentLogin(request):
 			return HttpResponse("You are not allowed here")
 		return HttpResponse("Wrong username or password")
 
+@csrf_exempt
 @login_required
 def APIendpoint(request):
 	JSONSerializer = serializers.get_serializer("json")
 	if request.method == "POST":
-		if request.POST.get('getcourses') :
+		logger.info(request.POST.get('q'))
+		if request.POST.get('q') == 'getcourses' :
 			courses = request.user.student.course.all();
 			response = HttpResponse(serializers.serialize("json", courses))
-		elif request.POST.get('getfeedbackforms') :
+		elif request.POST.get('q') == 'getfeedbackforms' :
 			fq = Feedback.objects.none()
 			for c in request.user.student.course.all():
 				fq = fq | c.feedback_set.all()
 			response = HttpResponse(serializers.serialize("json", fq))
-		elif request.POST.get('getassignments') :
+		elif request.POST.get('q') == 'getassignemnts' :
 			aq = Assignment.objects.none()
 			for c in request.user.student.course.all():
 				aq = aq | c.assignment_set.all()

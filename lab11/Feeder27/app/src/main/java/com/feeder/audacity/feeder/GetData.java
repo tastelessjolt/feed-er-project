@@ -61,10 +61,12 @@ public class GetData extends AsyncTask<Void, Void, Boolean> {
             String cookie = cookieData.getString("cookie",null);
             Log.d("my cookie", cookie);
 
+
+            String query = "q=" + message;
             con.setRequestMethod("POST");
             con.setRequestProperty("Cookie", cookie);
             DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-            wr.writeBytes(message);
+            wr.writeBytes(query);
             wr.flush();
             wr.close();
 //            Gson gson = new Gson();

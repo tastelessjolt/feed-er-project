@@ -42,6 +42,7 @@ public class HomeActivity extends AppCompatActivity
     public boolean syncDone = false;
     HashMap<Date, List<Deadline> > deadlineMap;
     List<Deadline> deadlines = null;
+    boolean deadlinesync = false;
     RecyclerView recList = null;
     ListView listView = null;
     List<Deadline> dynamicList = null;
@@ -97,18 +98,19 @@ public class HomeActivity extends AppCompatActivity
                 Toast.makeText(getApplicationContext(), formatter.format(date),
                         Toast.LENGTH_SHORT).show();
 
-
-                List<Deadline> temp = deadlineMap.get(date);
-                DeadlineAdapter deadlineAdapter;
-                System.out.println(temp);
-                if (temp != null) {
-                    System.out.println("Yeha");
-                    dynamicList.clear();
-                    dynamicList.addAll(temp);
-                    ca.notifyDataSetChanged();
-//                    dynamicList.addAll()
-//                    DeadlineAdapter ca = new DeadlineAdapter(createList(30));
-//                    recList.swapAdapter(ca,true);
+                if(deadlinesync) {
+                    List<Deadline> temp = deadlineMap.get(date);
+                    DeadlineAdapter deadlineAdapter;
+                    System.out.println(temp);
+                    if (temp != null) {
+                        System.out.println("Yeha");
+                        dynamicList.clear();
+                        dynamicList.addAll(temp);
+                        ca.notifyDataSetChanged();
+    //                    dynamicList.addAll()
+    //                    DeadlineAdapter ca = new DeadlineAdapter(createList(30));
+    //                    recList.swapAdapter(ca,true);
+                    }
                 }
             }
             @Override
@@ -160,14 +162,7 @@ public class HomeActivity extends AppCompatActivity
         return result;
     }
 
-    public class Deadline {
-        protected String deadlineName;
-        protected String courseName;
-        protected Date date;
-        protected int courseId;
-        protected static final String NAME_PREFIX = "Deadline_:";
-        protected static final String COURSE_PREFIX = "Course_";
-    }
+
 
     public class DeadlineAdapter extends RecyclerView.Adapter<DeadlineAdapter.DeadlineViewHolder> {
 
@@ -212,39 +207,46 @@ public class HomeActivity extends AppCompatActivity
 
     public void onBackgroundTaskCompleted(String message, JSONArray jsonData) {
         syncDone = true;
-        if(message.equals(Constants.GET_COURSES)) {
-            this.jsonData = jsonData;
-            deadlines = null;
-            HashMap<Date, Drawable> feedbacks = new HashMap<>();
-            List<Deadline> temp = null;
-            Deadline tempDeadline = null;
-            deadlineMap = new HashMap<>();
-            for (int i = 0; i < jsonData.length(); i++) {
-                try {
-                    JSONObject jsonObject = jsonData.getJSONObject(i);
-                    JSONObject fields = jsonObject.getJSONObject("fields");
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                    SimpleDateFormat formattertime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                    Date date = formatter.parse(fields.optString("deadline").substring(0, 11));
-                    Date time = formattertime.parse(fields.optString("deadline"));
-                    temp = deadlineMap.get(date);
-                    tempDeadline = new Deadline();
-                    tempDeadline.courseName = Integer.toString(fields.optInt("course"));
-                    tempDeadline.deadlineName = fields.optString("fb_name");
-                    tempDeadline.date = time;
-                    if (temp == null) {
-                        temp = new ArrayList<>();
-                        deadlineMap.put(date, temp);
+        if(jsonData != null) {
+            if (message.equals(Constants.GET_FEEDBACKS)) {
+                this.jsonData = jsonData;
+                deadlines = null;
+                HashMap<Date, Drawable> feedbacks = new HashMap<>();
+                List<Deadline> temp = null;
+                Deadline tempDeadline = null;
+                deadlineMap = new HashMap<>();
+
+                for (int i = 0; i < jsonData.length(); i++) {
+                    try {
+                        JSONObject jsonObject = jsonData.getJSONObject(i);
+                        JSONObject fields = jsonObject.getJSONObject("fields");
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat formattertime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                        Date date = formatter.parse(fields.optString("deadline").substring(0, 11));
+                        Date time = formattertime.parse(fields.optString("deadline"));
+                        temp = deadlineMap.get(date);
+                        tempDeadline = new Deadline();
+                        tempDeadline.courseName = Integer.toString(fields.optInt("course"));
+                        tempDeadline.deadlineName = fields.optString("fb_name");
+                        tempDeadline.date = time;
+                        if (temp == null) {
+                            temp = new ArrayList<>();
+                            deadlineMap.put(date, temp);
+                        }
+                        temp.add(tempDeadline);
+                        feedbacks.put(date, new ColorDrawable(fields.optInt("course")));
+                        caldroidFragment.setBackgroundDrawableForDates(feedbacks);
+                        caldroidFragment.refreshView();
+                        deadlinesync = true;
                     }
-                    temp.add(tempDeadline);
-                    feedbacks.put(date, new ColorDrawable(fields.optInt("course")));
-                    caldroidFragment.setBackgroundDrawableForDates(feedbacks);
-                    caldroidFragment.refreshView();
-                } catch (JSONException | ParseException e) {
-                    e.printStackTrace();
+                    catch (JSONException | ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
+                System.out.println(deadlineMap);
+            } else if (message.equals(Constants.GET_COURSES)) {
+                System.out.println(jsonData);
             }
-            System.out.println(deadlineMap);
         }
     }
 
