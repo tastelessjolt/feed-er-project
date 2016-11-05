@@ -1,0 +1,107 @@
+{% extends "feeder/base_site.html" %}
+{% load static %}
+
+
+{% block content %}
+
+
+<h2 style="text-align:center" > Feed'er Management Portal </h1>
+
+
+<form>
+  {% csrf_token %}
+</form>
+
+<div style="width: 400px; margin: 0 auto;" class="card white">
+<div class="card-content ">
+<form method="POST">
+	{% csrf_token %}
+    <p class="green-text"> {{ message }} </p>
+    <p class="red-text"> {{ error_message }} </p>
+	{% for field in form %}
+    <div class="fieldWrapper">
+        <span class="red-text">{{ field.errors }}</span>
+        {{ field.label_tag }} {{ field }}
+        {% if field.help_text %}
+        <p class="help green-text">{{ field.help_text|safe }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+    <div class="row">
+    <button class="btn col s4 offset-s1" type="submit"><i class="material-icons right">send</i>Login</button>
+    {# </div> #}
+     {# <p class="center col s1">or</p>{# </br> #} 
+    {# <div class="row"> #}
+    <div class="g-signin2 col s5 offset-s1" data-onsuccess="onSignIn"></div>
+    </div>
+</form>
+</div>
+</div>
+<script type="text/javascript">
+// using jQuery
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+function post(path, params, method) {
+    method = method || "post"; // Set method to post by default if not specified.
+
+    // The rest of this code assumes you are not using a library.
+    // It can be made less wordy if you use one.
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", path);
+    
+    for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", key);
+            hiddenField.setAttribute("value", params[key]);
+
+            form.appendChild(hiddenField);
+         }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+function onSignIn(googleUser) {
+  // var profile = googleUser.getBasicProfile();
+  // console.log('Email: ' + profile.getEmail());
+
+
+  var id_token = googleUser.getAuthResponse().id_token;
+  // var xhr = new XMLHttpRequest();
+  // xhr.open('POST', 'http://localhost:8000/feeder/login/');
+  // xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  var csrftoken = getCookie('csrftoken');
+  // xhr.setRequestHeader('X-CSRFToken', csrftoken );
+  // // xhr.setRequestHeader('Cookie', 'csrftoken={% csrf_token %}');
+  // xhr.onload = function() {
+  //   console.log('Signed in as: ' + xhr.responseText);
+  // };
+  // xhr.send('token=' + id_token);
+  post('', { csrfmiddlewaretoken : csrftoken, token : id_token })
+}
+</script>
+{% endblock %}
+
+{% block navbar %}
+    <li><a href="{% url 'feeder:login' %}">Login</a></li>
+    <li><a href="{% url 'feeder:register' %}">Register</a></li>    
+{% endblock navbar %}

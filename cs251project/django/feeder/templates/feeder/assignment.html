@@ -1,0 +1,41 @@
+
+{% extends "feeder/base_site.html" %}
+{% load static %}
+
+
+{% block content %}
+	<div class="row">
+	<div class="card col s8 offset-s2">
+		<div class="card-title flow-text center">{{ assignment.assignment_name }} </div> <hr>
+		<div class="card-content">
+		<table>
+	        <tbody>
+	          <tr>
+	            <td>Description</td>
+	            <td>{{ assignment.description }}</td>
+	          </tr>
+	          <tr>
+	            <td>Published On</td>
+	            <td>{{ assignment.pub_date }}</td>
+	          </tr>
+	          <tr>
+	            <td>Deadline</td>
+	            {% if assignment.is_past_deadline %}	
+	            	<td class="red lighten-4">{{ assignment.deadline }}</td>
+	            {% else %}
+	            	<td>{{ assignment.deadline }}</td>
+	            {% endif %}
+	          </tr>
+	        </tbody>
+	      </table>
+	      </div>
+	      </div>
+	      </div>
+{% endblock %}
+
+{% block navbar %}
+    <li><a onclick="signOut();" href="{% url 'feeder:logout' %}">Sign out</a></li>
+{% endblock %}
+{% block name %}
+    {{ user.get_full_name }}
+{% endblock %}

@@ -1,0 +1,66 @@
+
+{% extends "feeder/base_site.html" %}
+{% load static %}
+
+
+{% block content %}
+	<div class="row">
+	<div class="col s6">
+	<h4> Upcoming assigments/exams </h4>
+	{% if feedbacks %}
+	<ul class="collection">
+		{% for feedback in feedbacks %}
+			<a href="{% url 'feeder:feedback' feedback.id %}" class="black-text">
+			<li class="collection-item avatar">
+		      <i class="material-icons circle green">feedback</i>
+		      <span class="title"><b>{{ feedback.fb_name }}</b></span>
+		      <p>{{ feedback.course }} <br>
+		         {{ feedback.deadline }} 
+ 		      </p>
+		      <a href="#!" class="secondary-content"><i class="material-icons">feedback</i></a>
+		    </li>
+		    </a>
+		{% endfor %}
+	</ul>
+	{% else %}
+	<div class="card">
+		<div class="card-content center">
+			<h5> No upcoming feedbacks present. Add an feedback to view it. </h5>
+		</div>
+	</div>
+	{% endif %}
+	</div>
+	<div class="col s6">
+	<h4> Older feedbacks/exams </h4>
+	{% if old_feedbacks %}
+	<ul class="collection">
+		{% for feedback in old_feedbacks %}
+			<a href="{% url 'feeder:feedback' feedback.id %}" class="black-text">
+			<li class="collection-item avatar">
+		      <i class="material-icons circle red">feedback</i>
+		      <span class="title"><b>{{ feedback.fb_name }}</b></span>
+		      <p>{{ feedback.course }} <br>
+		         {{ feedback.deadline }} 
+ 		      </p>
+		      <a href="#!" class="secondary-content"><i class="material-icons">feedback</i></a>
+		    </li>
+		    </a>
+		{% endfor %}
+	</ul>
+	{% else %}
+	<div class="card">
+		<div class="card-content center">
+			<h5> No upcoming feedbacks present. Add an feedback to view it. </h5>
+		</div>
+	</div>
+	{% endif %}
+	</div>
+	</div>
+{% endblock %}
+
+{% block navbar %}
+    <li><a onclick="signOut();" href="{% url 'feeder:logout' %}">Sign out</a></li>
+{% endblock %}
+{% block name %}
+    {{ user.get_full_name }}
+{% endblock %}

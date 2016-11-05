@@ -1,0 +1,94 @@
+{% extends 'admins/base_site.html' %}
+{% load static %}
+
+{% block content %}
+<div style="width: 600px; margin: 0 auto;" class="card white">
+<div class="card-content z-depth-5">
+<style type="text/css">
+	.errorlist {
+		color: red;
+	}
+</style>
+
+<form method="POST">
+	{% csrf_token %}
+	<span class="card-title">Add Course</span>
+	
+	{{ cform.as_p }}
+
+    <span class="card-title">Expected Semester Exams</span>
+    {% for form in asformset.forms %}
+    <div class="as">	
+    	{{ form.as_p }}
+    </div>
+    {% endfor %}
+    {{ asformset.management_form }}
+
+	<span class="card-title">Feedback Forms</span>
+    <div class="fb1">	
+    	{{ fbform1.as_p }}
+		<caption class="card-title">Questions</caption>
+	    {% for qform in qsformset1.forms %}
+		    <div class="qs1">	
+		    	{{ qform.as_p }}
+		    </div>
+	    {% endfor %}
+	    {{ qsformset1.management_form }}
+
+	    {{ fbform2.as_p }}
+		<caption class="card-title">Questions</caption>
+	    {% for qform in qsformset2.forms %}
+		    <div class="qs2">	
+		    	{{ qform.as_p }}
+		    </div>
+	    {% endfor %}
+	    {{ qsformset2.management_form }}
+    </div>
+
+
+	<input class="btn orange waves-effect waves-light purple darken-4" type="submit" name="Submit">
+</form>
+</div>
+</div>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script type="text/javascript" src="{% static 'admins/moment.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'admins/bootstrap-material-datetimepicker.js' %}"></script>
+<script type="text/javascript">
+	function rerender(row) {
+		// console.log(row);
+		// var x = $(row);
+		// var y = x['0'].getElementsByTagName('select');
+		// console.log(y.material_select())
+		// x.getElementsByTagName('')
+		$('select').material_select();
+	}
+	$('.date-format').bootstrapMaterialDatePicker({ format : 'MM/DD/YYYY HH:MM', minDate : new Date() });
+	$(document).ready(function() {
+      	$('.qs1').formset({ 
+      		addText : ' <br><p class="btn white-text green ">Add Question </p> <br></br>',
+      		deleteText : '<p class="btn white-text red ">Remove Question</p> <br></br> ',
+      		prefix: '{{ qsformset1.prefix }}',
+			formCssClass: 'dynamic-formset1',
+			added: rerender,
+			removed: rerender,
+      	});
+      	$('.qs2').formset({ 
+      		addText : ' <br><p class="btn white-text green ">Add Question </p> <br></br>',
+      		deleteText : '<p class="btn white-text red ">Remove Question</p> <br></br> ',
+      		prefix: '{{ qsformset2.prefix }}',
+			formCssClass: 'dynamic-formset2',
+			added: rerender,
+			removed: rerender,
+      	});
+  	});
+</script>
+{% endblock %}
+
+{% block navbar %}
+    <li><a href="{% url 'admins:addcourse' %}">Add Course</a></li>
+    <li><a href="{% url 'admins:logout' %}">Sign out</a></li>
+{% endblock %}
+{% block name %}
+    
+{% endblock %}

@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title font="arial">Audacity</title>
+  {# <link rel="stylesheet" type="text/css" href="styles/nav-bar.css"> #}
+  {# <link rel="stylesheet" type="text/css" href="styles/home.css"> #}
+  {# <link rel="stylesheet" type="text/css" href="materialize/css/materialize.css"> #}
+
+  <link rel="stylesheet" type="text/css" href="{% static 'feeder/materialize.css' %}">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style type="text/css">
+    body {
+      background-image: url("{% static 'admins/asanoha-400px.png' %}");
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    main {
+      flex: 1 0 auto;
+    }
+  </style>
+  {% block includes %}
+  {% endblock %}
+  
+</head>
+<body>
+<meta name="google-signin-client_id" content="410381470-aviccs0f691gm6eqin9k9opo3ko5sji6.apps.googleusercontent.com">
+<header>
+<div class="navbar-fixed">
+<nav class="grey darken-3">
+  <div class="container">
+    <div class="nav-wrapper">
+        <ul id="nav-mobile" class="left hide-on-med-and-down">
+          <li><a href="">
+          {% block name %}
+            
+          {% endblock %}
+          </a></li>
+        </ul>
+      <a href="{% url 'feeder:index' %}" class="brand-logo center">Audacity</a>
+      <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          {% block navbar %}
+            <li><a href="courses">Courses</a></li>
+          {% endblock %}
+        </ul>
+    </div>
+  </div>
+</nav>
+</div>
+</header>
+<div class="container">
+{% block content %}
+
+{% endblock %}
+</div>
+<script type="text/javascript" src="{% static 'admins/jquery-3.1.0.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'feeder/materialize.js' %}"></script>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('select').material_select();
+});
+</script>
+{% block scripts %}
+{% endblock %}
+<script>
+    function onLoad() {
+      gapi.load('auth2', function() {
+        gapi.auth2.init();
+      });
+    }
+  function signOut() {
+    gapi.load('auth2', function() {
+      gapi.auth2.init();
+    });
+
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log('User signed out.');
+    });
+  }
+</script>
+<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+</body>

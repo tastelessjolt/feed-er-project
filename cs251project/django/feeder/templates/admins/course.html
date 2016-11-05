@@ -1,0 +1,181 @@
+{% extends 'admins/base_site.html' %}
+
+{% block content %}
+<form method="POST">
+	{% csrf_token %}
+<div class="row">
+<div class="col s6 offset-s3">
+<div style="margin: 0 auto;" class="card">
+	<div class="card-content">
+		{{ cform }}
+<button type="submit" class="btn-floating btn-large waves-effect waves-light red right"><i class="material-icons">send</i></button>
+	</div>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="row col offset-s1 s10">
+<h3 class="orange-text reflow">Instructors</h3><hr>
+<div class="card col s5" style="max-height: 400px; overflow: auto">
+	<div class="card-content" id="iselected">
+		{% if instructorlist %}
+
+		<h3 class="center ino-studs" hidden="hidden">No instructors registered</h3>
+			{% for instructor in instructorlist %}
+			<div class="ichecks" id="{{ instructor.user.username }}">
+			{# {% if instructor.course.id == course.id %} #}
+				<input type="checkbox" id="{{ instructor.user.username }}" name="instructor{{ instructor.id }}" checked="true">
+				<label for="{{ instructor.user.username }}">{{ instructor.user.get_full_name }}</label> </br>
+			{# {% endif %} #}
+			</div>
+			{% endfor %}
+		{% else %}
+			<h3 class="center ino-studs">No instructors registered</h3>
+		{% endif %}		
+	</div>
+</div>
+<div class="card col offset-s1 s6" style="max-height: 400px; overflow: auto;">
+	<div class="card-content" id="inon">
+		{% if allinstructors %}
+			{# <select multiple="multiple" class="allinstructors" name="All instructors" title="All instructors"> #}
+			<h3 class="center inon-reg" hidden="hidden">No instructors registered</h3>
+				{% for instructor in allinstructors %}
+				<div class="ichecks" id="{{ instructor.user.username }}">
+					{% if instructor.course.get.id != course.id %}	
+						<input type="checkbox" id="{{ instructor.user.username }}" name="instructor{{ instructor.id }}" >
+						<label for="{{ instructor.user.username }}">{{ instructor.user.get_full_name }}</label> </br>
+					{% endif %}
+				</div>
+				{% endfor %}
+			{# </select> #}
+		{% else %}
+			<h3 class="center inon-reg">No instructors registered</h3>
+		{% endif %}		
+	</div>
+</div>
+</div>
+</div>
+
+<div class="row">
+<div class="row col offset-s1 s10">
+<h3 class="orange-text reflow">Students</h3><hr>
+<div class="card col s5" style="max-height: 400px; overflow: auto">
+	<div class="card-content" id="selected">
+		{% if studentlist %}
+
+		<h3 class="center no-studs" hidden="hidden">No students registered</h3>
+			{% for student in studentlist %}
+			<div class="checks" id="{{ student.user.username }}">
+			{# {% if student.course.id == course.id %}					  #}
+				<input type="checkbox" id="{{ student.user.username }}" name="student{{ student.id }}" checked="true">
+				<label for="{{ student.user.username }}">{{ student.user.get_full_name }}</label> </br>
+			{# {% endif %} #}
+			</div>
+			{% endfor %}
+		{% else %}
+			<h3 class="center no-studs">No students registered</h3>
+		{% endif %}		
+	</div>
+</div>
+<div class="card col offset-s1 s6" style="max-height: 400px; overflow: auto;">
+	<div class="card-content" id="non">
+		{% if allstudents %}
+			{# <select multiple="multiple" class="allstudents" name="All Students" title="All Students"> #}
+			<h3 class="center non-reg" hidden="hidden">No students registered</h3>
+				{% for student in allstudents %}
+				<div class="checks" id="{{ student.user.username }}">
+					{% if student.course.get.id != course.id %}	
+						<input type="checkbox" id="{{ student.user.username }}" name="student{{ student.id }}" >
+						<label for="{{ student.user.username }}">{{ student.user.get_full_name }}</label> </br>
+					{% endif %}
+				</div>
+				{% endfor %}
+			{# </select> #}
+		{% else %}
+			<h3 class="center non-reg">No students registered</h3>
+		{% endif %}		
+	</div>
+</div>
+</div>
+</div>
+</form>
+
+{% block script %}
+<script type="text/javascript"> 
+
+$(document).ready(function() {
+	$(".checks").click(function(){
+		var select=$("#selected")[0];
+		var non = $("#non")[0];
+		var x = this;
+		var labela = $(".no-studs")[0]
+		var labelb = $(".non-reg")[0]
+		var input = x.childNodes[1];
+		console.log("YO");
+		input.checked = !input.checked;
+		if (select.contains(x)) {
+
+			x.remove();
+			non.appendChild(x);
+		}
+		else if(non.contains(x)) {
+			x.remove();
+			select.appendChild(x);
+		}
+
+		if(non.childElementCount > 1 && !labela.hidden){
+			labela.hidden = true;
+		}
+		else if(non.childElementCount == 1) {
+			labelb.hidden = false;
+		}
+		if(select.childElementCount > 1 && !labelb.hidden){
+			labelb.hidden = true;
+		}
+		else if(select.childElementCount == 1) {
+			labela.hidden = false;
+		}
+	});
+	$(".ichecks").click(function(){
+		var select=$("#iselected")[0];
+		var non = $("#inon")[0];
+		var x = this;
+		var labela = $(".ino-studs")[0]
+		var labelb = $(".inon-reg")[0]
+		var input = x.childNodes[1];
+		console.log("YO");
+		input.checked = !input.checked;
+		if (select.contains(x)) {
+
+			x.remove();
+			non.appendChild(x);
+		}
+		else if(non.contains(x)) {
+			x.remove();
+			select.appendChild(x);
+		}
+
+		if(non.childElementCount > 1 && !labela.hidden){
+			labela.hidden = true;
+		}
+		else if(non.childElementCount == 1) {
+			labelb.hidden = false;
+		}
+		if(select.childElementCount > 1 && !labelb.hidden){
+			labelb.hidden = true;
+		}
+		else if(select.childElementCount == 1) {
+			labela.hidden = false;
+		}
+	});
+});
+</script>
+{% endblock %}
+
+{% endblock %}
+
+{% block navbar %}
+    <li><a href="{% url 'admins:addcourse' %}">Add Course</a></li>    
+    <li><a href="{% url 'admins:logout' %}">Sign out</a></li>
+
+{% endblock %}
