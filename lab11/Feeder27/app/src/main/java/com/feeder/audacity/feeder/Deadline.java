@@ -9,8 +9,11 @@ import java.util.Date;
 public class Deadline {
     protected String deadlineName;
     protected String courseName;
-    protected Date date;
-    protected int courseId;
+    protected Date deadline;
+    protected Date pubDate;
+    protected int id;
+    protected boolean isFeedback;
+    protected String description;
     protected static final String NAME_PREFIX = "Deadline_:";
     protected static final String COURSE_PREFIX = "Course_";
 }

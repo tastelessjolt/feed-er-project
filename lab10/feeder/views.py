@@ -45,19 +45,23 @@ def APIendpoint(request):
 		logger.info(request.POST.get('q'))
 		if request.POST.get('q') == 'getcourses' :
 			courses = request.user.student.course.all();
-			response = HttpResponse(serializers.serialize("json", courses))
+			response = HttpResponse(serializers.serialize("json", courses), content_type='application/json')
 		elif request.POST.get('q') == 'getfeedbackforms' :
 			fq = Feedback.objects.none()
 			for c in request.user.student.course.all():
 				fq = fq | c.feedback_set.all()
-			response = HttpResponse(serializers.serialize("json", fq))
+			response = HttpResponse(serializers.serialize("json", fq), content_type='application/json')
 		elif request.POST.get('q') == 'getassignemnts' :
 			aq = Assignment.objects.none()
 			for c in request.user.student.course.all():
 				aq = aq | c.assignment_set.all()
-			response = HttpResponse(serializers.serialize("json", aq))
-		else :
-			response = HttpResponse()
+			response = HttpResponse(serializers.serialize("json", aq), content_type='application/json')
+		elif request.POST.get('q') == 'getquestions':
+			qq = Question.objects.none();
+			for c in request.user.student.course.all():
+				for f in c.feedback_set.all() :
+					qq = qq | f.question_set.all()
+			response = HttpResponse(serializers.serialize("json", qq), content_type='application/json')
 		response.set_cookie('sessionid', request.COOKIES.get('sessionid'), secure=True, expires = timezone.now() + datetime.timedelta(days=365))
 		return response
 	elif request.method == "GET":
@@ -66,17 +70,17 @@ def APIendpoint(request):
 			fq = fq | c.feedback_set.all()
 
 		data = serializers.serialize("json", fq)
-		response = HttpResponse(data)
+		response = HttpResponse(data, content_type='application/json')
 		response.set_cookie('sessionid', request.COOKIES.get('sessionid'), secure=True, expires = timezone.now() + datetime.timedelta(days=365))
 		return response
 
 def TestAPI(request):
 	# JSONSerializer = serializers.get_serializer("json")
-	fq = Feedback.objects.none();
+	aq = Assignment.objects.none()
 	for c in Course.objects.all():
-		fq = fq | c.feedback_set.all()
-	data = serializers.serialize("json", Feedback.objects.all(), fields=('question_set'))
-	return HttpResponse(data)
+		aq = aq | c.assignment_set.all()
+	response = HttpResponse(serializers.serialize("json", aq), content_type='application/json')
+	return response
 
 def LoginView(request):
 	if request.method == "POST":

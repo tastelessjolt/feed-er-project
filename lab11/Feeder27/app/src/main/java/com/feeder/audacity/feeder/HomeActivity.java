@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.IntegerRes;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -43,7 +44,7 @@ public class HomeActivity extends AppCompatActivity
     public JSONArray jsonData = null;
     public CaldroidFragment caldroidFragment;
     public boolean syncDone = false;
-    HashMap<Date, List<Deadline> > deadlineMap;
+    HashMap<Date, List<Deadline> > deadlineMap = null;
     List<Deadline> deadlines = null;
     boolean deadlinesync = false;
     boolean coursesync = false;
@@ -184,8 +185,14 @@ public class HomeActivity extends AppCompatActivity
         @Override
         public void onBindViewHolder(DeadlineViewHolder deadlineViewHolder, int i) {
             Deadline ci = deadlineList.get(i);
+            deadlineViewHolder.cardTitle.setText(ci.deadlineName);
             deadlineViewHolder.courseName.setText(ci.courseName);
-            deadlineViewHolder.assignmentName.setText(ci.deadlineName);
+            if(ci.isFeedback) {
+                deadlineViewHolder.deadlineName.setText("Feedback");
+            }
+            else {
+                deadlineViewHolder.deadlineName.setText("Assignment");
+            }
         }
 
         @Override
@@ -198,15 +205,19 @@ public class HomeActivity extends AppCompatActivity
         }
 
         public class DeadlineViewHolder extends RecyclerView.ViewHolder {
-            protected TextView assignmentName;
+            protected TextView deadlineName;
             protected TextView courseName;
+            protected TextView cardTitle;
 
             public DeadlineViewHolder(View v) {
                 super(v);
-                assignmentName =  (TextView) v.findViewById(R.id.title);
+                cardTitle = (TextView) v.findViewById(R.id.card_title);
+                deadlineName =  (TextView) v.findViewById(R.id.title);
                 courseName = (TextView)  v.findViewById(R.id.courseName);
             }
         }
+
+
     }
 
     public void onBackgroundTaskCompleted(String message, JSONArray jsonData) {
@@ -214,12 +225,12 @@ public class HomeActivity extends AppCompatActivity
         if(jsonData != null) {
             if (message.equals(Constants.GET_FEEDBACKS)) {
                 this.jsonData = jsonData;
-                deadlines = null;
                 HashMap<Date, Drawable> feedbacks = new HashMap<>();
                 List<Deadline> temp = null;
                 Deadline tempDeadline = null;
-                deadlineMap = new HashMap<>();
-
+                if(deadlineMap == null) {
+                    deadlineMap = new HashMap<>();
+                }
                 for (int i = 0; i < jsonData.length(); i++) {
                     try {
                         JSONObject jsonObject = jsonData.getJSONObject(i);
@@ -230,9 +241,11 @@ public class HomeActivity extends AppCompatActivity
                         Date time = formattertime.parse(fields.optString("deadline"));
                         temp = deadlineMap.get(date);
                         tempDeadline = new Deadline();
-                        tempDeadline.courseName = Integer.toString(fields.optInt("course"));
+                        tempDeadline.id = jsonObject.optInt("pk");
+                        tempDeadline.courseName = courses.get(fields.getInt("course")).courseName;
                         tempDeadline.deadlineName = fields.optString("fb_name");
-                        tempDeadline.date = time;
+                        tempDeadline.isFeedback = true;
+                        tempDeadline.deadline = time;
                         if (temp == null) {
                             temp = new ArrayList<>();
                             deadlineMap.put(date, temp);
@@ -242,6 +255,8 @@ public class HomeActivity extends AppCompatActivity
                         caldroidFragment.setBackgroundDrawableForDates(feedbacks);
                         caldroidFragment.refreshView();
                         deadlinesync = true;
+                        GetData getData = new GetData(Constants.GET_QUESTIONS, this);
+                        getData.execute();
                     }
                     catch (JSONException | ParseException e) {
                         e.printStackTrace();
@@ -270,6 +285,48 @@ public class HomeActivity extends AppCompatActivity
 
                 GetData getData1 = new GetData(Constants.GET_ASSIGNMENTS,this);
                 getData1.execute();
+            }
+            else if (message.equals(Constants.GET_ASSIGNMENTS)) {
+                this.jsonData = jsonData;
+                HashMap<Date, Drawable> feedbacks = new HashMap<>();
+                List<Deadline> temp = null;
+                Deadline tempDeadline = null;
+                if(deadlineMap == null) {
+                    deadlineMap = new HashMap<>();
+                }
+                for (int i = 0; i < jsonData.length(); i++) {
+                    try {
+                        JSONObject jsonObject = jsonData.getJSONObject(i);
+                        JSONObject fields = jsonObject.getJSONObject("fields");
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat formattertime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                        Date date = formatter.parse(fields.optString("deadline").substring(0, 11));
+                        Date time = formattertime.parse(fields.optString("deadline"));
+                        temp = deadlineMap.get(date);
+                        tempDeadline = new Deadline();
+                        tempDeadline.id = jsonObject.optInt("pk");
+                        tempDeadline.courseName = courses.get(fields.getInt("course")).courseName;
+                        tempDeadline.deadlineName = fields.optString("assignment_name");
+                        tempDeadline.description = fields.optString("description");
+                        tempDeadline.isFeedback = false;
+                        tempDeadline.deadline = time;
+                        if (temp == null) {
+                            temp = new ArrayList<>();
+                            deadlineMap.put(date, temp);
+                        }
+                        temp.add(tempDeadline);
+                        feedbacks.put(date, new ColorDrawable(fields.optInt("course")));
+                        caldroidFragment.setBackgroundDrawableForDates(feedbacks);
+                        caldroidFragment.refreshView();
+                        deadlinesync = true;
+                    }
+                    catch (JSONException | ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            else if (message.equals(Constants.GET_QUESTIONS)) {
+                
             }
         }
     }
